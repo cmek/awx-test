@@ -1,6 +1,9 @@
 - name: just a playbook
   hosts: all
-  connection: httpapi
+  ansible_connection: ansible.netcommon.httpapi
+  ansible_network_os: arista.eos.eos
+  ansible_become: yes
+  ansible_become_method: enable
   gather_facts: no
   tasks:
     - name: set hostname
