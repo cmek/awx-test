@@ -1,5 +1,6 @@
 - name: just a playbook
   hosts: all
+  connection: httpapi
   gather_facts: no
   tasks:
     - name: set hostname
