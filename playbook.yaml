@@ -1,0 +1,9 @@
+- name: just a playbook
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: set hostname
+      arista.eos.eos_config:
+        lines:
+          - hostname {{ inventory_hostname }}
+        save_when: modified
