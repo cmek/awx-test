@@ -4,5 +4,5 @@
   tasks:
     - name: interface configuration
       arista.eos.eos_config:
-        src: templates/{{ target_os }}/{{ template_name }}.j2
+        src: templates/eos/{{ template_name }}.j2
         save_when: modified
