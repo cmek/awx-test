@@ -1,0 +1,11 @@
+vlan {{ s_tag }}
+   name {{ service_key }}
+interface {{ interface }}
+   switchport mode trunk
+   switchport trunk allowed vlan add {{ s_tag }}
+   switchport vlan translation {{ private_vlan }} dot1q-tunnel {{ s_tag }}
+interface Vxlan1
+   vxlan vlan {{ s_tag }} vni {{ vni }}
+router bgp {{ asn }}
+   vlan-aware-bundle {{ vlan_bundle }}
+      vlan add {{ s_tag }}

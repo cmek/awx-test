@@ -1,0 +1,4 @@
+interface {{ interface }}
+  switchport trunk allowed vlan add {{ s_tag }}
+  switchport mode trunk
+  switchport vlan translation {{ private_vlan }} dot1q-tunnel {{ s_tag }}
