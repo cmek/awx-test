@@ -1,6 +1,6 @@
 - name: get device facts
   hosts: all
-  gather_facts: no
+  gather_facts: yes
   tasks:
     - name: get facts
       arista.eos.facts:
