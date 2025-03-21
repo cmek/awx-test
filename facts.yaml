@@ -6,3 +6,6 @@
       arista.eos.facts:
         gather_subset:
           - all
+    - name: print facts
+      debug:
+        var: ansible_facts
