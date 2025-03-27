@@ -20,7 +20,12 @@ azure-pri-2 │          │     │          │     │          │     │  
 ```
     
 # EOS configs
-## Service1 - primary on remote, secondary on local, delivered to single port
+            using the following variables:
+            vlan - 1234
+            s_tag - 42
+            service_key = "SO123456"
+
+## Service1 - primary (ceos1 eth1/1) on remote, secondary (ceos4 eth1/1) on local, delivered to single port. Client on ceos4 eth1/5
 
 Config for ceos1(192.168.1.1):
 ______________________________
@@ -54,7 +59,7 @@ interface Ethernet1/5
   switchport vlan translation 1234 dot1q-tunnel 42
 ```
 
-## Service2 - primary and secondary on remote, delivered to single port
+## Service2 - primary (ceos1 eth1/1) and secondary (ceos4 eth1/1) on remote, delivered to single port (ceos3 eth1/4)
 
 Config for ceos1(192.168.1.1):
 ______________________________
@@ -100,7 +105,7 @@ router bgp 65003
       vlan add 42
 ```
 
-## Service3 - primary and secondary on remote, delivered to different ports
+## Service3 - primary (ceos1 eth1/1) and secondary (ceos4 eth1/1) on remote, delivered to different ports - ceos2 eth1/3 and ceos3 eth1/4
 
 Config for ceos1(192.168.1.1):
 ______________________________
