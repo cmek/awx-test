@@ -19,13 +19,15 @@ azure-pri-2 │          │     │          │     │          │     │  
                  co11            co12              co13              co14               
 ```
     
-# EOS configs
-            using the following variables:
-            vlan - 1234
-            s_tag - 42
-            service_key = "SO123456"
 
-## Service1 - primary (ceos1 eth1/1) on remote, secondary (ceos4 eth1/1) on local, delivered to single port. Client on ceos4 eth1/5
+using the following variables:
+vlan - 1234
+s_tag - 42
+service_key = "SO123456"
+express_route_pair = 1
+# EOS configs
+
+## Service 1 - primary (ceos1 eth1/1) on remote, secondary (ceos4 eth1/1) on local, delivered to single port. Client on ceos4 eth1/5
 
 Config for ceos1(192.168.1.1):
 ______________________________
@@ -59,7 +61,7 @@ interface Ethernet1/5
   switchport vlan translation 1234 dot1q-tunnel 42
 ```
 
-## Service2 - primary (ceos1 eth1/1) and secondary (ceos4 eth1/1) on remote, delivered to single port (ceos3 eth1/4)
+## Service 2 - primary (ceos1 eth1/1) and secondary (ceos4 eth1/1) on remote, delivered to single port (ceos3 eth1/4)
 
 Config for ceos1(192.168.1.1):
 ______________________________
@@ -105,7 +107,7 @@ router bgp 65003
       vlan add 42
 ```
 
-## Service3 - primary (ceos1 eth1/1) and secondary (ceos4 eth1/1) on remote, delivered to different ports - ceos2 eth1/3 and ceos3 eth1/4
+## Service 3 - primary (ceos1 eth1/1) and secondary (ceos4 eth1/1) on remote, delivered to different ports - ceos2 eth1/3 and ceos3 eth1/4
 
 Config for ceos1(192.168.1.1):
 ______________________________
@@ -165,5 +167,132 @@ interface Vxlan1
 router bgp 65003
    vlan-aware-bundle azure-er-1-secondary
       vlan add 42
+```
+
+# OCNOS configs
+## Service 1 - primary (ocnos1 ce10) on local, secondary (ocnos4 ce10) on remote, delivered to single port. Client on ocnos1 xe11
+
+Config for ocnos1(192.168.1.21):
+________________________________
+```
+mac vrf SO123456
+  rd 37186:2191234
+  route-target both 37186:2191234
+
+nvo vxlan id 2191234 ingress-replication
+  vxlan host-reachability-protocol evpn-bgp SO123456
+
+interface ce10.1234 switchport
+  description SO123456
+  encapsulation dot1q 42
+  access-if-evpn
+    map vpn-id 2191234
+interface xe11.1234
+  description 
+  encapsulation dot1q 1234
+  rewrite push 42
+  access-if-evpn
+    map vpn-id 2291234
+```
+
+Config for ocnos4(192.168.1.24):
+________________________________
+```
+mac vrf SO123456
+  rd 37186:2291234
+  route-target both 37186:2291234
+
+nvo vxlan id 2291234 ingress-replication
+  vxlan host-reachability-protocol evpn-bgp SO123456
+
+interface ce10.1234 switchport
+  description SO123456
+  encapsulation dot1q 42
+  access-if-evpn
+    map vpn-id 2291234
+```
+
+## Service 2 - primary (ocnos1 ce10) and secondary (ocnos4 ce10) on remote, delivered to single port (ocnos3 xe13)
+
+Config for ocnos1(192.168.1.21):
+________________________________
+```
+mac vrf SO123456
+  rd 37186:2191234
+  route-target both 37186:2191234
+
+nvo vxlan id 2191234 ingress-replication
+  vxlan host-reachability-protocol evpn-bgp SO123456
+
+interface ce10.1234 switchport
+  description SO123456
+  encapsulation dot1q 42
+  access-if-evpn
+    map vpn-id 2191234
+interface xe13.1234
+  description 
+  encapsulation dot1q 1234
+  rewrite push 42
+  access-if-evpn
+    map vpn-id 2291234
+```
+
+Config for ocnos4(192.168.1.24):
+________________________________
+```
+mac vrf SO123456
+  rd 37186:2291234
+  route-target both 37186:2291234
+
+nvo vxlan id 2291234 ingress-replication
+  vxlan host-reachability-protocol evpn-bgp SO123456
+
+interface ce10.1234 switchport
+  description SO123456
+  encapsulation dot1q 42
+  access-if-evpn
+    map vpn-id 2291234
+```
+
+## Service 3 - primary (ocnos1 ce10) and secondary (ocnos4 ce10) on local, delivered to split ports (ocnos3 ce13) and (ocnos4 ce14)
+
+Config for ocnos1(192.168.1.21):
+________________________________
+```
+mac vrf SO123456
+  rd 37186:2191234
+  route-target both 37186:2191234
+
+nvo vxlan id 2191234 ingress-replication
+  vxlan host-reachability-protocol evpn-bgp SO123456
+
+interface ce10.1234 switchport
+  description SO123456
+  encapsulation dot1q 42
+  access-if-evpn
+    map vpn-id 2191234
+interface xe11.1234
+  description 
+  encapsulation dot1q 1234
+  rewrite push 42
+  access-if-evpn
+    map vpn-id 2291234
+```
+
+Config for ocnos4(192.168.1.24):
+________________________________
+```
+mac vrf SO123456
+  rd 37186:2291234
+  route-target both 37186:2291234
+
+nvo vxlan id 2291234 ingress-replication
+  vxlan host-reachability-protocol evpn-bgp SO123456
+
+interface ce10.1234 switchport
+  description SO123456
+  encapsulation dot1q 42
+  access-if-evpn
+    map vpn-id 2291234
 ```
 

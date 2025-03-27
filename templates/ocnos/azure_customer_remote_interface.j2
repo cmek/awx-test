@@ -1,0 +1,13 @@
+mac vrf {{ service_key }}
+  rd 37186:{{ vni }}
+  route-target both 37186:{{ vni }}
+
+nvo vxlan id {{ vni }} ingress-replication
+  vxlan host-reachability-protocol evpn-bgp {{ service_key }}
+
+interface {{ interface }}.{{ vlan }} switchport
+  description {{ service_key }}
+  encapsulation dot1q 2003
+  rewrite push dot1q {{ s_key }}
+  access-if-evpn
+    map vpn-id {{ vni }}

@@ -45,24 +45,36 @@ azure-pri-2 │          │     │          │     │          │     │  
     ceos3_client3 = Endpoint(ceos3, "Ethernet1/4")
     ceos4_client4 = Endpoint(ceos4, "Ethernet1/5")
 
-    ocnos1_azure_pri_2 = Endpoint(ocnos1, "xe10")
-    ocnos4_azure_sec_2 = Endpoint(ocnos4, "xe10")
-    ocnos1_client1 = Endpoint(ocnos1, "co11")
-    ocnos2_client2 = Endpoint(ocnos1, "co12")
-    ocnos3_client3 = Endpoint(ocnos1, "co13")
-    ocnos4_client4 = Endpoint(ocnos1, "co14")
+    ocnos1_azure_pri_2 = Endpoint(ocnos1, "ce10")
+    ocnos4_azure_sec_2 = Endpoint(ocnos4, "ce10")
+    ocnos1_client1 = Endpoint(ocnos1, "xe11")
+    ocnos2_client2 = Endpoint(ocnos1, "xe12")
+    ocnos3_client3 = Endpoint(ocnos1, "xe13")
+    ocnos4_client4 = Endpoint(ocnos1, "xe14")
 
-    print("""# EOS configs
-            using the following variables:
-            vlan - 1234
-            s_tag - 42
-            service_key = "SO123456"
+    print("""
+using the following variables:
+vlan - 1234
+s_tag - 42
+service_key = "SO123456"
+express_route_pair = 1
+# EOS configs
 """)
-    print("## Service1 - primary (ceos1 eth1/1) on remote, secondary (ceos4 eth1/1) on local, delivered to single port. Client on ceos4 eth1/5\n")
+    print("## Service 1 - primary (ceos1 eth1/1) on remote, secondary (ceos4 eth1/1) on local, delivered to single port. Client on ceos4 eth1/5\n")
     print_configs(AzureService([ceos4_client4], [ceos1_azure_pri_1, ceos4_azure_sec_1]).get_configs(s_tag=42, vlan=1234, service_key="SO123456", express_route_pair=1))
 
-    print("## Service2 - primary (ceos1 eth1/1) and secondary (ceos4 eth1/1) on remote, delivered to single port (ceos3 eth1/4)\n")
+    print("## Service 2 - primary (ceos1 eth1/1) and secondary (ceos4 eth1/1) on remote, delivered to single port (ceos3 eth1/4)\n")
     print_configs(AzureService([ceos3_client3], [ceos1_azure_pri_1, ceos4_azure_sec_1]).get_configs(s_tag=42, vlan=1234, service_key="SO123456", express_route_pair=1))
 
-    print("## Service3 - primary (ceos1 eth1/1) and secondary (ceos4 eth1/1) on remote, delivered to different ports - ceos2 eth1/3 and ceos3 eth1/4\n")
+    print("## Service 3 - primary (ceos1 eth1/1) and secondary (ceos4 eth1/1) on remote, delivered to different ports - ceos2 eth1/3 and ceos3 eth1/4\n")
     print_configs(AzureService([ceos2_client2, ceos3_client3], [ceos1_azure_pri_1, ceos4_azure_sec_1]).get_configs(s_tag=42, vlan=1234, service_key="SO123456", express_route_pair=1))
+
+    print("""# OCNOS configs""")
+    print("## Service 1 - primary (ocnos1 ce10) on local, secondary (ocnos4 ce10) on remote, delivered to single port. Client on ocnos1 xe11\n")
+    print_configs(AzureService([ocnos1_client1], [ocnos1_azure_pri_2, ocnos4_azure_sec_2]).get_configs(s_tag=42, vlan=1234, service_key="SO123456", express_route_pair=2))
+
+    print("## Service 2 - primary (ocnos1 ce10) and secondary (ocnos4 ce10) on remote, delivered to single port (ocnos3 xe13)\n")
+    print_configs(AzureService([ocnos3_client3], [ocnos1_azure_pri_2, ocnos4_azure_sec_2]).get_configs(s_tag=42, vlan=1234, service_key="SO123456", express_route_pair=2))
+
+    print("## Service 3 - primary (ocnos1 ce10) and secondary (ocnos4 ce10) on local, delivered to split ports (ocnos3 ce13) and (ocnos4 ce14)\n")
+    print_configs(AzureService([ocnos1_client1], [ocnos1_azure_pri_2, ocnos4_azure_sec_2]).get_configs(s_tag=42, vlan=1234, service_key="SO123456", express_route_pair=2))
