@@ -1,0 +1,11 @@
+- name: get device facts
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - name: get facts
+      arista.eos.facts:
+        gather_subset:
+          - all
+    - name: print facts
+      debug:
+        var: ansible_facts

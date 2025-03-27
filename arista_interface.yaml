@@ -1,0 +1,8 @@
+- name: azure provisioning template
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: interface configuration
+      arista.eos.eos_config:
+        src: templates/eos/{{ template_name }}.j2
+        save_when: modified

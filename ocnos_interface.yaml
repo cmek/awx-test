@@ -1,0 +1,8 @@
+- name: azure provisioning template
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: interface configuration
+      ipinfusion.ocnos.ocnos_config:
+        src: templates/ocnos/{{ template_name }}.j2
+        save_when: modified
