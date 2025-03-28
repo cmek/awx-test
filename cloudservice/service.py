@@ -131,11 +131,14 @@ class AzureService(CloudService):
                 # if it's the first port then make it the primary
                 if endpoint == self.customer[0]:
                     variables["vlan_bundle"] = f"{vlan_bundle_prefix}-primary"
+                    variables["vni"] = self._get_vni(express_route_pair, "primary", vlan)
                 # second port will be secondary
                 else:
                     variables["vlan_bundle"] = f"{vlan_bundle_prefix}-secondary"
+                    variables["vni"] = self._get_vni(express_route_pair, "secondary", vlan)
             else:
                 variables["vlan_bundle"] = f"{vlan_bundle_prefix}-{bundle_name}"
+                variables["vni"] = self._get_vni(express_route_pair, "combined", vlan)
 
             if device in (
                 self.primary_cni_endpoint.device,

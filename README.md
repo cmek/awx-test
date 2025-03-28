@@ -150,7 +150,7 @@ interface Ethernet1/3
    switchport trunk allowed vlan add 42
    switchport vlan translation 667 dot1q-tunnel 42
 interface Vxlan1
-   vxlan vlan 42 vni 129667
+   vxlan vlan 42 vni 119667
 router bgp 65002
    vlan-aware-bundle azure-er-1-primary
       vlan add 42
@@ -279,7 +279,7 @@ interface xe12.667
   encapsulation dot1q 667
   rewrite push 42
   access-if-evpn
-    map vpn-id 229667
+    map vpn-id 219667
 interface xe13.667
   description 
   encapsulation dot1q 667
