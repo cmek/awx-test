@@ -5,7 +5,7 @@ mac vrf {{ service_key }}
 nvo vxlan id {{ vni }} ingress-replication
   vxlan host-reachability-protocol evpn-bgp {{ service_key }}
 
-interface {{ interface }}.{{ vlan }} switchport
+interface {{ interface }}.{{ s_tag }} switchport
   description {{ service_key }}
   encapsulation dot1q {{ s_tag }}
   access-if-evpn

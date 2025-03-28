@@ -185,7 +185,7 @@ mac vrf SO123456
 nvo vxlan id 239667 ingress-replication
   vxlan host-reachability-protocol evpn-bgp SO123456
 
-interface ce10.667 switchport
+interface ce10.42 switchport
   description SO123456
   encapsulation dot1q 42
   access-if-evpn
@@ -208,7 +208,7 @@ mac vrf SO123456
 nvo vxlan id 239667 ingress-replication
   vxlan host-reachability-protocol evpn-bgp SO123456
 
-interface ce10.667 switchport
+interface ce10.42 switchport
   description SO123456
   encapsulation dot1q 42
   access-if-evpn
@@ -227,7 +227,7 @@ mac vrf SO123456
 nvo vxlan id 239667 ingress-replication
   vxlan host-reachability-protocol evpn-bgp SO123456
 
-interface ce10.667 switchport
+interface ce10.42 switchport
   description SO123456
   encapsulation dot1q 42
   access-if-evpn
@@ -250,7 +250,7 @@ mac vrf SO123456
 nvo vxlan id 239667 ingress-replication
   vxlan host-reachability-protocol evpn-bgp SO123456
 
-interface ce10.667 switchport
+interface ce10.42 switchport
   description SO123456
   encapsulation dot1q 42
   access-if-evpn
@@ -269,7 +269,7 @@ mac vrf SO123456
 nvo vxlan id 219667 ingress-replication
   vxlan host-reachability-protocol evpn-bgp SO123456
 
-interface ce10.667 switchport
+interface ce10.42 switchport
   description SO123456
   encapsulation dot1q 42
   access-if-evpn
@@ -298,7 +298,7 @@ mac vrf SO123456
 nvo vxlan id 229667 ingress-replication
   vxlan host-reachability-protocol evpn-bgp SO123456
 
-interface ce10.667 switchport
+interface ce10.42 switchport
   description SO123456
   encapsulation dot1q 42
   access-if-evpn
