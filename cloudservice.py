@@ -79,5 +79,5 @@ using the following variables:
     print("## Service 2 - primary (ocnos1 ce10) and secondary (ocnos4 ce10) on remote, delivered to single port (ocnos3 xe13)\n")
     print_configs(AzureService([ocnos3_client3], [ocnos1_azure_pri_2, ocnos4_azure_sec_2]).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2))
 
-    print("## Service 3 - primary (ocnos1 ce10) and secondary (ocnos4 ce10) on local, delivered to split ports (ocnos3 ce13) and (ocnos4 ce14)\n")
-    print_configs(AzureService([ocnos1_client1], [ocnos1_azure_pri_2, ocnos4_azure_sec_2]).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2))
+    print("## Service 3 - primary (ocnos1 ce10) and secondary (ocnos4 ce10) on local, delivered to split ports (ocnos2 ce12) and (ocnos3 ce13)\n")
+    print_configs(AzureService([ocnos2_client2, ocnos3_client3], [ocnos1_azure_pri_2, ocnos4_azure_sec_2]).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2))

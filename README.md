@@ -257,45 +257,51 @@ interface ce10.667 switchport
     map vpn-id 239667
 ```
 
-## Service 3 - primary (ocnos1 ce10) and secondary (ocnos4 ce10) on local, delivered to split ports (ocnos3 ce13) and (ocnos4 ce14)
+## Service 3 - primary (ocnos1 ce10) and secondary (ocnos4 ce10) on local, delivered to split ports (ocnos2 ce12) and (ocnos3 ce13)
 
 Config for ocnos1(192.168.1.21):
 ________________________________
 ```
 mac vrf SO123456
-  rd 37186:239667
-  route-target both 37186:239667
+  rd 37186:219667
+  route-target both 37186:219667
 
-nvo vxlan id 239667 ingress-replication
+nvo vxlan id 219667 ingress-replication
   vxlan host-reachability-protocol evpn-bgp SO123456
 
 interface ce10.667 switchport
   description SO123456
   encapsulation dot1q 42
   access-if-evpn
-    map vpn-id 239667
-interface xe11.667
+    map vpn-id 219667
+interface xe12.667
   description 
   encapsulation dot1q 667
   rewrite push 42
   access-if-evpn
-    map vpn-id 239667
+    map vpn-id 229667
+interface xe13.667
+  description 
+  encapsulation dot1q 667
+  rewrite push 42
+  access-if-evpn
+    map vpn-id 229667
 ```
 
 Config for ocnos4(192.168.1.24):
 ________________________________
 ```
 mac vrf SO123456
-  rd 37186:239667
-  route-target both 37186:239667
+  rd 37186:229667
+  route-target both 37186:229667
 
-nvo vxlan id 239667 ingress-replication
+nvo vxlan id 229667 ingress-replication
   vxlan host-reachability-protocol evpn-bgp SO123456
 
 interface ce10.667 switchport
   description SO123456
   encapsulation dot1q 42
   access-if-evpn
-    map vpn-id 239667
+    map vpn-id 229667
 ```
 
