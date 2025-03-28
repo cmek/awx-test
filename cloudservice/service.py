@@ -85,20 +85,9 @@ class AzureService(CloudService):
         ## now there are a few different scenarios to consider.
         ## some of them can be determined here
         ###
-        ## if there's only one customer port, and it's not local to any of the CNI ports
-        ## then it's 'combined'
+        ## if there's only one customer port then it's 'combined'
         if len(self.customer) == 1:
-            if self.customer[0].device not in (
-                self.primary_cni_endpoint.device,
-                self.secondary_cni_endpoint.device,
-            ):
-                bundle_name = "combined"
-            # if it's local to one of the ports then the bundle name is the opposite
-            else:
-                if self.customer[0].device == self.primary_cni_endpoint.device:
-                    bundle_name = "secondary"
-                if self.customer[0].device == self.secondary_cni_endpoint.device:
-                    bundle_name = "primary"
+            bundle_name = "combined"
 
         # process cloud NNI ports (Azure)
         # these use the same template
@@ -107,10 +96,13 @@ class AzureService(CloudService):
             variables["interface"] = interface
             variables["template"] = "azure_interface.j2"
 
-            if endpoint == self.primary_cni_endpoint:
-                variables["vni"] = self._get_vni(express_route_pair, "primary", vlan)
+            if bundle_name == "combined":
+                variables["vni"] = self._get_vni(express_route_pair, "combined", vlan)
             else:
-                variables["vni"] = self._get_vni(express_route_pair, "secondary", vlan)
+                if endpoint == self.primary_cni_endpoint:
+                    variables["vni"] = self._get_vni(express_route_pair, "primary", vlan)
+                else:
+                    variables["vni"] = self._get_vni(express_route_pair, "secondary", vlan)
 
             if bundle_name is None:
                 # if there are multiple customer ports, then the bundle name is the same

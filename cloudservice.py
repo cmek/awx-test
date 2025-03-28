@@ -24,6 +24,14 @@ azure-pri-2 │          │     │          │     │          │     │  
             └──────────┘     └──────────┘     └──────────┘     └──────────┘            
               client1         client2           client3           client4              
                  co11            co12              co13              co14               
+
+
+using the following variables:
+- vlan - 667
+- s_tag - 42
+- service_key = "SO123456"
+- express_route_pair = 1
+
 ```
     """)
 
@@ -53,11 +61,6 @@ azure-pri-2 │          │     │          │     │          │     │  
     ocnos4_client4 = Endpoint(ocnos1, "xe14")
 
     print("""
-using the following variables:
-vlan - 667
-s_tag - 42
-service_key = "SO123456"
-express_route_pair = 1
 # EOS configs
 """)
     print("## Service 1 - primary (ceos1 eth1/1) on remote, secondary (ceos4 eth1/1) on local, delivered to single port. Client on ceos4 eth1/5\n")
