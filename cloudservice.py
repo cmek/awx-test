@@ -56,9 +56,9 @@ using the following variables:
     ocnos1_azure_pri_2 = Endpoint(ocnos1, "ce10")
     ocnos4_azure_sec_2 = Endpoint(ocnos4, "ce10")
     ocnos1_client1 = Endpoint(ocnos1, "xe11")
-    ocnos2_client2 = Endpoint(ocnos1, "xe12")
-    ocnos3_client3 = Endpoint(ocnos1, "xe13")
-    ocnos4_client4 = Endpoint(ocnos1, "xe14")
+    ocnos2_client2 = Endpoint(ocnos2, "xe12")
+    ocnos3_client3 = Endpoint(ocnos3, "xe13")
+    ocnos4_client4 = Endpoint(ocnos4, "xe14")
 
     print("""
 # EOS configs
