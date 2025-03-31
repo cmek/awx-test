@@ -1,5 +1,15 @@
+import os
 import unittest
-from cloudservice import CeosDevice, OcnosDevice, AzureService, Endpoint, JinjaRenderer
+from unittest.mock import patch
+from dotenv import load_dotenv
+from cloudservice import (CeosDevice,
+        OcnosDevice,
+        AzureService,
+        Endpoint,
+        JinjaRenderer,
+        AWXRenderer)
+
+load_dotenv()
 
 class TestCloudService(unittest.TestCase):
 
@@ -274,6 +284,49 @@ interface xe13.667 switchport
     map vpn-id 229667
 """)
 
+
+class TestAWXRenderer(unittest.TestCase):
+
+    def setUp(self):
+        self.maxDiff = None
+        self.ceos1 = CeosDevice("ceos1", "192.168.1.1")
+        self.ocnos1 = OcnosDevice("ocnos1", "192.168.1.21")
+        self.renderer = AWXRenderer(os.getenv("AWX_URL", ""),
+                                    os.getenv("AWX_USERNAME", ""),
+                                    os.getenv("AWX_PASSWORD", ""))
+
+    @patch('towerlib.entities.job.JobTemplate.launch')
+    def test_awx_render(self, tower_launch_mock):
+        self.ceos1.render_config(self.renderer,
+                                 template="azure_interface",
+                                 interface="Ethernet1",
+                                 s_tag=42,
+                                 service_key="SO123456",
+                                 vni=1001,
+                                 vlan_bundle="azure-er-1-combined",
+                                 asn=65001)  
+
+        tower_launch_mock.assert_called_once()
+
+    def test_awx_render_ceos(self):
+        self.ceos1.render_config(self.renderer,
+                                 template="azure_interface",
+                                 interface="Ethernet1",
+                                 s_tag=42,
+                                 service_key="SO123456",
+                                 vni=1001,
+                                 vlan_bundle="azure-er-1-combined",
+                                 asn=65001)  
+
+    def test_awx_render_ocnos(self):
+        self.ocnos1.render_config(self.renderer,
+                                 template="azure_interface",
+                                 interface="Ethernet1",
+                                 s_tag=42,
+                                 service_key="SO123456",
+                                 vni=1001,
+                                 vlan_bundle="azure-er-1-combined",
+                                 asn=65001)  
 
 if __name__ == "__main__":
     unittest.main()
