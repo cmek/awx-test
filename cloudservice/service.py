@@ -95,7 +95,7 @@ class AzureService(CloudService):
         for endpoint in self.cni:
             device, interface = endpoint.device, endpoint.interface
             variables["interface"] = interface
-            variables["template"] = "azure_interface.j2"
+            variables["template"] = "tagged_cni_interface.j2"
 
             if bundle_name == "combined":
                 variables["vni"] = self._get_vni(express_route_pair, "combined", vlan)
@@ -145,10 +145,10 @@ class AzureService(CloudService):
                 self.primary_cni_endpoint.device,
                 self.secondary_cni_endpoint.device,
             ):
-                variables["template"] = "azure_customer_local_interface.j2"
+                variables["template"] = "tagged_customer_local_interface.j2"
                 config = device.render_config(self.renderer, **variables)
             else:
-                variables["template"] = "azure_customer_remote_interface.j2"
+                variables["template"] = "tagged_customer_remote_interface.j2"
                 config = device.render_config(self.renderer, **variables)
 
             if device_name in ret:

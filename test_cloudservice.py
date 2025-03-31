@@ -310,7 +310,7 @@ class TestAWXRenderer(unittest.TestCase):
 
     def test_awx_render_ceos(self):
         self.ceos1.render_config(self.renderer,
-                                 template="azure_interface",
+                                 template="tagged_cni_interface",
                                  interface="Ethernet1",
                                  s_tag=42,
                                  service_key="SO123456",
@@ -320,8 +320,8 @@ class TestAWXRenderer(unittest.TestCase):
 
     def test_awx_render_ocnos(self):
         self.ocnos1.render_config(self.renderer,
-                                 template="azure_interface",
-                                 interface="Ethernet1",
+                                 template="tagged_cni_interface",
+                                 interface="xe13",
                                  s_tag=42,
                                  service_key="SO123456",
                                  vni=1001,
