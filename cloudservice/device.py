@@ -1,6 +1,4 @@
 import abc
-import os
-from jinja2 import Environment, FileSystemLoader
 
 
 class BaseDevice(abc.ABC):
@@ -9,7 +7,6 @@ class BaseDevice(abc.ABC):
     def __init__(
         self, name: str, ip_address: str, interface: str | None = None
     ) -> None:
-        self.env = Environment(loader=FileSystemLoader("templates"))
         self.name = name
         self.ip_address = ip_address
         self._iface = self.validate_interface(interface) if interface else None
@@ -61,12 +58,17 @@ class BaseDevice(abc.ABC):
     def get_device_info(self):
         pass
 
-    def render_config(self, **kwargs):
-        template = self.env.get_template(os.path.join(self.os, kwargs.get("template")))
+    def render_config(self, renderer, **kwargs):
         kwargs["asn"] = self.asn
         kwargs["ip_address"] = self.ip_address
         kwargs["hostname"] = self.name
-        return template.render(**kwargs)
+        kwargs["os"] = self.os
+
+        return renderer.render(
+            kwargs.get("template"), **kwargs
+        )
+#        template = self.env.get_template(os.path.join(self.os, kwargs.get("template")))
+#        return template.render(**kwargs)
 
 
 class CeosDevice(BaseDevice):

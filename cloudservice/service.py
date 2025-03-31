@@ -17,8 +17,9 @@ class CloudService(abc.ABC):
          with Azure it is always 2 ports
     """
 
-    def __init__(self, customer: Endpoints, cni: Endpoints) -> None:
+    def __init__(self, customer: Endpoints, cni: Endpoints, renderer) -> None:
         self.customer = customer
+        self.renderer = renderer
         self.cni = cni
 
     @abc.abstractmethod
@@ -42,12 +43,12 @@ class AzureService(CloudService):
     Azure will always have 2 endpoints - primary and secondary.
     """
 
-    def __init__(self, customer: Endpoints, cni: Endpoints) -> None:
+    def __init__(self, customer: Endpoints, cni: Endpoints, renderer) -> None:
         self.name = "Azure"
         # assume we always have 2 Azure endpoints
         assert len(cni) == 2
 
-        super().__init__(customer, cni)
+        super().__init__(customer, cni, renderer)
         self.primary_cni_endpoint, self.secondary_cni_endpoint = cni
         # also assume primary and secondary are on 2 different devices
         # this doesn't how to be strictly true but would be weird
@@ -116,9 +117,9 @@ class AzureService(CloudService):
 
             device_name = str(device)
             if device_name in ret:
-                ret[device_name] += "\n" + device.render_config(**variables)
+                ret[device_name] += "\n" + device.render_config(self.renderer, **variables)
             else:
-                ret[device_name] = device.render_config(**variables)
+                ret[device_name] = device.render_config(self.renderer, **variables)
 
         for endpoint in self.customer:
             device, interface = endpoint.device, endpoint.interface
@@ -145,10 +146,10 @@ class AzureService(CloudService):
                 self.secondary_cni_endpoint.device,
             ):
                 variables["template"] = "azure_customer_local_interface.j2"
-                config = device.render_config(**variables)
+                config = device.render_config(self.renderer, **variables)
             else:
                 variables["template"] = "azure_customer_remote_interface.j2"
-                config = device.render_config(**variables)
+                config = device.render_config(self.renderer, **variables)
 
             if device_name in ret:
                 ret[device_name] += "\n" + config

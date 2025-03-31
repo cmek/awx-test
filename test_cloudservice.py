@@ -1,5 +1,5 @@
 import unittest
-from cloudservice import CeosDevice, OcnosDevice, AzureService, Endpoint
+from cloudservice import CeosDevice, OcnosDevice, AzureService, Endpoint, JinjaRenderer
 
 class TestCloudService(unittest.TestCase):
 
@@ -23,6 +23,8 @@ class TestCloudService(unittest.TestCase):
         ocnos2 = OcnosDevice("ocnos2", "192.168.1.22")
         ocnos3 = OcnosDevice("ocnos3", "192.168.1.23")
         ocnos4 = OcnosDevice("ocnos4", "192.168.1.24")
+
+        self.renderer = JinjaRenderer("templates")
     
         self.ceos1_azure_pri_1 = Endpoint(ceos1, "Ethernet1/1")
         self.ceos4_azure_sec_1 = Endpoint(ceos4, "Ethernet1/1")
@@ -39,7 +41,7 @@ class TestCloudService(unittest.TestCase):
         self.ocnos4_client4 = Endpoint(ocnos4, "xe14")
     
     def test_arista_primary_on_remote_secondary_on_local_single_port(self):
-        configs = AzureService([self.ceos4_client4], [self.ceos1_azure_pri_1, self.ceos4_azure_sec_1]).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=1)
+        configs = AzureService([self.ceos4_client4], [self.ceos1_azure_pri_1, self.ceos4_azure_sec_1], self.renderer).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=1)
         configs_str = self.configs_to_str(configs)
         self.assertEqual(configs_str, """Config for ceos1(192.168.1.1):
 ______________________________
@@ -70,7 +72,7 @@ interface Ethernet1/5
 """)
 
     def test_arista_primary_and_secondary_on_remote_to_2_ports(self):
-        configs = AzureService([self.ceos2_client2, self.ceos3_client3], [self.ceos1_azure_pri_1, self.ceos4_azure_sec_1]).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=1)
+        configs = AzureService([self.ceos2_client2, self.ceos3_client3], [self.ceos1_azure_pri_1, self.ceos4_azure_sec_1], self.renderer).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=1)
         configs_str = self.configs_to_str(configs)
         self.assertEqual(configs_str, """Config for ceos1(192.168.1.1):
 ______________________________
@@ -123,7 +125,7 @@ router bgp 65003
 """)
 
     def test_ocnos_primary_on_local_secondary_on_remote_to_single_port(self):
-        configs = AzureService([self.ocnos1_client1], [self.ocnos1_azure_pri_2, self.ocnos4_azure_sec_2]).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2)
+        configs = AzureService([self.ocnos1_client1], [self.ocnos1_azure_pri_2, self.ocnos4_azure_sec_2], self.renderer).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2)
         configs_str = self.configs_to_str(configs)
         self.assertEqual(configs_str, """Config for ocnos1(192.168.1.21):
 ________________________________
@@ -162,7 +164,7 @@ interface ce10.42 switchport
 """)
 
     def test_ocnos_primary_and_secondary_on_remote_to_single_port(self):
-        configs = AzureService([self.ocnos3_client3], [self.ocnos1_azure_pri_2, self.ocnos4_azure_sec_2]).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2)
+        configs = AzureService([self.ocnos3_client3], [self.ocnos1_azure_pri_2, self.ocnos4_azure_sec_2], self.renderer).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2)
         configs_str = self.configs_to_str(configs)
         self.assertEqual(configs_str, """Config for ocnos1(192.168.1.21):
 ________________________________
@@ -210,7 +212,7 @@ interface xe13.667 switchport
 """)
 
     def test_ocnos_primary_and_secondary_on_local_to_two_ports(self):
-        configs = AzureService([self.ocnos2_client2, self.ocnos3_client3], [self.ocnos1_azure_pri_2, self.ocnos4_azure_sec_2]).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2)
+        configs = AzureService([self.ocnos2_client2, self.ocnos3_client3], [self.ocnos1_azure_pri_2, self.ocnos4_azure_sec_2], renderer=self.renderer).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2)
         configs_str = self.configs_to_str(configs)
         self.assertEqual(configs_str, """Config for ocnos1(192.168.1.21):
 ________________________________
