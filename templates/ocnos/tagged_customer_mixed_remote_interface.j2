@@ -1,0 +1,13 @@
+mac vrf {{ vlan_bundle }}
+  rd 37186:{{ vni }}
+  route-target both 37186:{{ vni }}
+
+nvo vxlan id ???{{ vni }} ingress-replication
+  vxlan host-reachability-protocol evpn-bgp {{ vlan_bundle }}
+
+interface {{ interface }}.{{ vlan }} switchport
+  description {{ service_key }}
+  encapsulation dot1q {{ vlan }}
+  rewrite push dot1q {{ s_tag }}
+  access-if-evpn
+    map vpn-id ???{{ vni }}

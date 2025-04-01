@@ -1,0 +1,16 @@
+vlan {{ vlan }}
+  name {{ service_key }}
+
+Interface {{ interface }}
+   switchport trunk allowed vlan add {{ vlan }}
+
+interface Vxlan1
+   vxlan vlan {{ vlan }} vni VNISERVICEORDER_AZUREXC
+
+router bgp {{ asn }}
+   vlan-aware-bundle {{ service_key }}
+      rd 37195:VNISERVICEORDER_AZUREXC
+      route-target both 37195:VNISERVICEORDER_AZUREXC
+      redistribute learned
+      redistribute static
+      vlan {{ vlan }}

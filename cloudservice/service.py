@@ -148,7 +148,10 @@ class AzureService(CloudService):
                 variables["template"] = "tagged_customer_local_interface.j2"
                 config = device.render_config(self.renderer, **variables)
             else:
-                variables["template"] = "tagged_customer_remote_interface.j2"
+                if device.os != self.cni[0].device.os:
+                    variables["template"] = "tagged_customer_mixed_remote_interface.j2"
+                else:
+                    variables["template"] = "tagged_customer_remote_interface.j2"
                 config = device.render_config(self.renderer, **variables)
 
             if device_name in ret:
