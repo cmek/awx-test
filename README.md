@@ -380,7 +380,7 @@ mac vrf azure-er-2-combined
   rd 37186:239667
   route-target both 37186:239667
 
-nvo vxlan id ???239667 ingress-replication
+nvo vxlan id 123456 ingress-replication
   vxlan host-reachability-protocol evpn-bgp azure-er-2-combined
 
 interface xe13.667 switchport
@@ -388,7 +388,7 @@ interface xe13.667 switchport
   encapsulation dot1q 667
   rewrite push dot1q 42
   access-if-evpn
-    map vpn-id ???239667
+    map vpn-id 123456
 ```
 
 ### CNI on IPI (ocnos1 ce10, ocnos4 ce10) and customer on Arista (ceos2 eth1/3)

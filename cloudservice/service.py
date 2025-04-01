@@ -77,11 +77,16 @@ class AzureService(CloudService):
             "vlan": vlan,
             "service_key": service_key,
             "vni": "XXXXXX",
+            "service_vni": "ZZZZZ",
             "vlan_bundle": "YYYYYYYYY",
         }
 
         vlan_bundle_prefix = f"azure-er-{str(express_route_pair)}"
         bundle_name = None
+
+        assert service_key.startswith("SO")
+        if service_key.startswith("SO"):
+            variables["service_vni"] = service_key[2:]
 
         ## now there are a few different scenarios to consider.
         ## some of them can be determined here
