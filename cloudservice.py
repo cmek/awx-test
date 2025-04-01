@@ -96,7 +96,16 @@ using the following variables:
     print("### Service 3 - primary (ocnos1 ce10) and secondary (ocnos4 ce10) on local, delivered to split ports (ocnos2 ce12) and (ocnos3 ce13)\n")
     print_configs(AzureService([ocnos2_client2, ocnos3_client3], [ocnos1_azure_pri_2, ocnos4_azure_sec_2], renderer=renderer).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2))
 
-    print("## Un-tagged configs - GCP")
+    print("## Mixed OCNOS&Arista configs")
+
+    print("### CNI on Arista (ceos1 eth1/1, ceos4 eth1/1) and customer on IPI (ocnos3 ce10)\n")
+    print_configs(AzureService([ocnos3_client3], [ceos1_azure_pri_1, ceos4_azure_sec_1], renderer=renderer).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2))
+
+    print("### CNI on IPI (ocnos1 ce10, ocnos4 ce10) and customer on Arista (ceos2 eth1/3)\n")
+    print_configs(AzureService([ceos2_client2], [ocnos1_azure_pri_2, ocnos4_azure_sec_2], renderer=renderer).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2))
+
+
+    print("# Un-tagged configs - GCP")
     print("### Arista customer (ceos2 eth1/3) to OCNOS CNI (ocnos4 ce20)\n")
     print_configs(GCPService([ceos2_client2], [ocnos4_aws_4], renderer=renderer).get_configs(vlan=667, service_key="SO123456"))
 

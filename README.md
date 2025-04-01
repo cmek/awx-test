@@ -342,7 +342,108 @@ interface xe13.667 switchport
     map vpn-id 229667
 ```
 
-## Un-tagged configs - GCP
+## Mixed OCNOS&Arista configs
+### CNI on Arista (ceos1 eth1/1, ceos4 eth1/1) and customer on IPI (ocnos3 ce10)
+
+Config for ceos1(192.168.1.1):
+______________________________
+```
+vlan 42
+   name SO123456
+interface Ethernet1/1
+  switchport trunk allowed vlan add 42
+interface Vxlan1
+   vxlan vlan 42 vni 239667
+router bgp 65001
+   vlan-aware-bundle azure-er-2-combined
+      vlan add 42
+```
+
+Config for ceos4(192.168.1.4):
+______________________________
+```
+vlan 42
+   name SO123456
+interface Ethernet1/1
+  switchport trunk allowed vlan add 42
+interface Vxlan1
+   vxlan vlan 42 vni 239667
+router bgp 65004
+   vlan-aware-bundle azure-er-2-combined
+      vlan add 42
+```
+
+Config for ocnos3(192.168.1.23):
+________________________________
+```
+mac vrf SO123456
+  rd 37186:239667
+  route-target both 37186:239667
+
+nvo vxlan id 239667 ingress-replication
+  vxlan host-reachability-protocol evpn-bgp SO123456
+
+interface xe13.667 switchport
+  description SO123456
+  encapsulation dot1q 2003
+  rewrite push dot1q 
+  access-if-evpn
+    map vpn-id 239667
+```
+
+### CNI on IPI (ocnos1 ce10, ocnos4 ce10) and customer on Arista (ceos2 eth1/3)
+
+Config for ocnos1(192.168.1.21):
+________________________________
+```
+mac vrf SO123456
+  rd 37186:239667
+  route-target both 37186:239667
+
+nvo vxlan id 239667 ingress-replication
+  vxlan host-reachability-protocol evpn-bgp SO123456
+
+interface ce10.42 switchport
+  description SO123456
+  encapsulation dot1q 42
+  access-if-evpn
+    map vpn-id 239667
+```
+
+Config for ocnos4(192.168.1.24):
+________________________________
+```
+mac vrf SO123456
+  rd 37186:239667
+  route-target both 37186:239667
+
+nvo vxlan id 239667 ingress-replication
+  vxlan host-reachability-protocol evpn-bgp SO123456
+
+interface ce10.42 switchport
+  description SO123456
+  encapsulation dot1q 42
+  access-if-evpn
+    map vpn-id 239667
+```
+
+Config for ceos2(192.168.1.2):
+______________________________
+```
+vlan 42
+   name SO123456
+interface Ethernet1/3
+   switchport mode trunk
+   switchport trunk allowed vlan add 42
+   switchport vlan translation 667 dot1q-tunnel 42
+interface Vxlan1
+   vxlan vlan 42 vni 239667
+router bgp 65002
+   vlan-aware-bundle azure-er-2-combined
+      vlan add 42
+```
+
+# Un-tagged configs - GCP
 ### Arista customer (ceos2 eth1/3) to OCNOS CNI (ocnos4 ce20)
 
 Config for ocnos4(192.168.1.24):
