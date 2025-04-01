@@ -7,7 +7,7 @@ nvo vxlan id {{ vni }} ingress-replication
 
 interface {{ interface }}.{{ vlan }} switchport
   description {{ service_key }}
-  encapsulation dot1q 2003
-  rewrite push dot1q {{ s_key }}
+  encapsulation dot1q {{ vlan }}
+  rewrite push dot1q {{ s_tag }}
   access-if-evpn
     map vpn-id {{ vni }}
