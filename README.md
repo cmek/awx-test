@@ -437,12 +437,12 @@ Interface Ethernet1/3
    switchport trunk allowed vlan add 667
 
 interface Vxlan1
-   vxlan vlan 667 vni VNISERVICEORDER_AZUREXC
+   vxlan vlan 667 vni 123456
 
 router bgp 65002
    vlan-aware-bundle SO123456
-      rd 37195:VNISERVICEORDER_AZUREXC
-      route-target both 37195:VNISERVICEORDER_AZUREXC
+      rd 37195:123456
+      route-target both 37195:123456
       redistribute learned
       redistribute static
       vlan 667
