@@ -384,7 +384,7 @@ router bgp 65002
       vlan 667
 ```
 
-### IPInfusion customer (ocnos4 ce14) to local IPInfusion CNI (ocnos4 ce20)
+### IPInfusion customer (ocnos4 ce14) to local IPInfusion CNI (ocnos4 po123)
 
 Config for ocnos4(192.168.1.24):
 ________________________________
@@ -406,5 +406,42 @@ interface xe14.667 switchport
   encapsulation dot1q 667
   access-if-evpn
     map vpn-id 15169667
+```
+
+### IPInfusion customer (ocnos2 xe12) to remote IPInfusion CNI (ocnos4 po123)
+
+Config for ocnos4(192.168.1.24):
+________________________________
+```
+mac vrf 15169
+ evpn-vlan-service vlan-aware-bundle
+ rd 37195:15169
+ route-target both 37195:15169
+
+nvo vxlan id 15169667 ingress-replication
+ vxlan host-reachability-protocol evpn-bgp 15169
+
+interface po123.667 switchport
+ encapsulation dot1q 667
+ description SO123456
+ access-if-evpn
+  map vpn-id 15169667
+```
+
+Config for ocnos2(192.168.1.22):
+________________________________
+```
+mac vrf 15169
+ evpn-vlan-service vlan-aware-bundle
+ rd 37195:15169
+ route-target both 37195:15169
+
+nvo vxlan id 15169667 ingress-replication
+ vxlan host-reachability-protocol evpn-bgp 15169
+
+interface xe12.667 switchport
+ encapsulation dot1q 667
+ access-if-evpn
+  map vpn-id 15169667
 ```
 

@@ -100,5 +100,8 @@ using the following variables:
     print("### Arista customer (ceos2 eth1/3) to OCNOS CNI (ocnos4 ce20)\n")
     print_configs(GCPService([ceos2_client2], [ocnos4_aws_4], renderer=renderer).get_configs(vlan=667, service_key="SO123456"))
 
-    print("### IPInfusion customer (ocnos4 ce14) to local IPInfusion CNI (ocnos4 ce20)\n")
+    print("### IPInfusion customer (ocnos4 ce14) to local IPInfusion CNI (ocnos4 po123)\n")
     print_configs(GCPService([ocnos4_client4], [ocnos4_aws_4], renderer=renderer).get_configs(vlan=667, service_key="SO123456"))
+
+    print("### IPInfusion customer (ocnos2 xe12) to remote IPInfusion CNI (ocnos4 po123)\n")
+    print_configs(GCPService([ocnos2_client2], [ocnos4_aws_4], renderer=renderer).get_configs(vlan=667, service_key="SO123456"))
