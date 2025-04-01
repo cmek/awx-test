@@ -358,6 +358,7 @@ nvo vxlan id 15169667 ingress-replication
 
 interface po123.667 switchport
  encapsulation dot1q 667
+ description SO123456
  access-if-evpn
   map vpn-id 15169667
 ```
@@ -398,6 +399,7 @@ nvo vxlan id 15169667 ingress-replication
 
 interface po123.667 switchport
  encapsulation dot1q 667
+ description SO123456
  access-if-evpn
   map vpn-id 15169667
 interface xe14.667 switchport

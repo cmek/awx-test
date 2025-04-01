@@ -8,5 +8,6 @@ nvo vxlan id {{ vni }}{{ vlan }} ingress-replication
 
 interface {{ interface }}.{{ vlan }} switchport
  encapsulation dot1q {{ vlan }}
+ description {{ service_key }}
  access-if-evpn
   map vpn-id {{ vni }}{{ vlan }}
