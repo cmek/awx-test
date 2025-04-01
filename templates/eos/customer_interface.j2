@@ -1,0 +1,16 @@
+vlan {{ vlan }}
+  description {{ service_key }}
+
+Interface {{ interface }}
+   switchport trunk allowed vlan add {{ vlan }}
+
+interface Vxlan1
+   vxlan vlan {{ vlan }} vni {{ vni }}{{ vlan }}
+
+router bgp {{ asn }}
+   vlan-aware-bundle {{ vni }}
+      rd 37195:{{ vni }}
+      route-target both 37195:{{ vni }}
+      redistribute learned
+      redistribute static
+      vlan {{ vlan }}

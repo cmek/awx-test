@@ -84,6 +84,7 @@ class AWXRenderer(Renderer):
         # make sure we have the os
         os = variables.get("os", None)
         target = variables.get("hostname", None)
+        variables["template_name"] = template_name
         assert(os), "os is required in the variables"
         assert(target), "target (hostname) is required in the variables"
        

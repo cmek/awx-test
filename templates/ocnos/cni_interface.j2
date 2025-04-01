@@ -1,0 +1,12 @@
+mac vrf {{ vni }}
+ evpn-vlan-service vlan-aware-bundle
+ rd 37195:{{ vni }}
+ route-target both 37195:{{ vni }}
+
+nvo vxlan id {{ vni }}{{ vlan }} ingress-replication
+ vxlan host-reachability-protocol evpn-bgp {{ vni }}
+
+interface {{ interface }}.{{ vlan }} switchport
+ encapsulation dot1q {{ vlan }}
+ access-if-evpn
+  map vpn-id {{ vni }}{{ vlan }}

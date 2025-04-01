@@ -1,0 +1,4 @@
+interface {{ interface }}.{{ vlan }} switchport
+ encapsulation dot1q {{ vlan }}
+ access-if-evpn
+  map vpn-id {{ vni }}{{ vlan }}

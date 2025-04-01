@@ -2,9 +2,9 @@
               client1            client2          client3         client4              
                eth1/2             eth1/3           eth1/4          eth1/5              
              ┌───────┐         ┌───────┐        ┌───────┐        ┌───────┐             
- azure-pri-1 │       │         │       │        │       │        │       │ azure-sec-1 
-   eth1/1    │ ceos1 │         │ ceos2 │        │ ceos3 │        │ ceos4 │    eth1/1   
-             │       │         │       │        │       │        │       │             
+ azure-pri-1 │       │         │       │        │       │        │       │ azure-sec-1
+   eth1/1    │ ceos1 │         │ ceos2 │        │ ceos3 │        │ ceos4 │    eth1/1
+aws-1 eth2/1 │       │         │       │        │       │        │       │ aws-2 eth2/1 
              └───────┘         └───────┘        └───────┘        └───────┘             
             192.168.1.1       192.168.1.2      192.168.1.3      192.168.1.4            
 
@@ -12,8 +12,8 @@
             192.168.1.21     192.168.1.22     192.168.1.23     192.168.1.24            
             ┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐            
 azure-pri-2 │          │     │          │     │          │     │          │ azure-sec-2
-  xe10      │  ocnos1  │     │  ocnos2  │     │  ocnos3  │     │  ocnos4  │     xe10   
-            │          │     │          │     │          │     │          │            
+  ce10      │  ocnos1  │     │  ocnos2  │     │  ocnos3  │     │  ocnos4  │     ce10
+aws-3 po123 │          │     │          │     │          │     │          │ aws-4 po123
             └──────────┘     └──────────┘     └──────────┘     └──────────┘            
               client1         client2           client3           client4              
                  co11            co12              co13              co14               
@@ -28,9 +28,10 @@ using the following variables:
 ```
     
 
-# EOS configs
+# Tagged configs
+## EOS configs
 
-## Service 1 - primary (ceos1 eth1/1) on remote, secondary (ceos4 eth1/1) on local, delivered to single port. Client on ceos4 eth1/5
+### Service 1 - primary (ceos1 eth1/1) on remote, secondary (ceos4 eth1/1) on local, delivered to single port. Client on ceos4 eth1/5
 
 Config for ceos1(192.168.1.1):
 ______________________________
@@ -64,7 +65,7 @@ interface Ethernet1/5
   switchport vlan translation 667 dot1q-tunnel 42
 ```
 
-## Service 2 - primary (ceos1 eth1/1) and secondary (ceos4 eth1/1) on remote, delivered to single port (ceos3 eth1/4)
+### Service 2 - primary (ceos1 eth1/1) and secondary (ceos4 eth1/1) on remote, delivered to single port (ceos3 eth1/4)
 
 Config for ceos1(192.168.1.1):
 ______________________________
@@ -110,7 +111,7 @@ router bgp 65003
       vlan add 42
 ```
 
-## Service 3 - primary (ceos1 eth1/1) and secondary (ceos4 eth1/1) on remote, delivered to different ports - ceos2 eth1/3 and ceos3 eth1/4
+### Service 3 - primary (ceos1 eth1/1) and secondary (ceos4 eth1/1) on remote, delivered to different ports - ceos2 eth1/3 and ceos3 eth1/4
 
 Config for ceos1(192.168.1.1):
 ______________________________
@@ -172,8 +173,8 @@ router bgp 65003
       vlan add 42
 ```
 
-# OCNOS configs
-## Service 1 - primary (ocnos1 ce10) on local, secondary (ocnos4 ce10) on remote, delivered to single port. Client on ocnos1 xe11
+## OCNOS configs
+### Service 1 - primary (ocnos1 ce10) on local, secondary (ocnos4 ce10) on remote, delivered to single port. Client on ocnos1 xe11
 
 Config for ocnos1(192.168.1.21):
 ________________________________
@@ -215,7 +216,7 @@ interface ce10.42 switchport
     map vpn-id 239667
 ```
 
-## Service 2 - primary (ocnos1 ce10) and secondary (ocnos4 ce10) on remote, delivered to single port (ocnos3 xe13)
+### Service 2 - primary (ocnos1 ce10) and secondary (ocnos4 ce10) on remote, delivered to single port (ocnos3 xe13)
 
 Config for ocnos1(192.168.1.21):
 ________________________________
@@ -269,7 +270,7 @@ interface xe13.667 switchport
     map vpn-id 239667
 ```
 
-## Service 3 - primary (ocnos1 ce10) and secondary (ocnos4 ce10) on local, delivered to split ports (ocnos2 ce12) and (ocnos3 ce13)
+### Service 3 - primary (ocnos1 ce10) and secondary (ocnos4 ce10) on local, delivered to split ports (ocnos2 ce12) and (ocnos3 ce13)
 
 Config for ocnos1(192.168.1.21):
 ________________________________
@@ -339,5 +340,69 @@ interface xe13.667 switchport
   rewrite push dot1q 
   access-if-evpn
     map vpn-id 229667
+```
+
+## Un-tagged configs - GCP
+### Arista customer (ceos2 eth1/3) to OCNOS CNI (ocnos4 ce20)
+
+Config for ocnos4(192.168.1.24):
+________________________________
+```
+mac vrf 15169
+ evpn-vlan-service vlan-aware-bundle
+ rd 37195:15169
+ route-target both 37195:15169
+
+nvo vxlan id 15169667 ingress-replication
+ vxlan host-reachability-protocol evpn-bgp 15169
+
+interface po123.667 switchport
+ encapsulation dot1q 667
+ access-if-evpn
+  map vpn-id 15169667
+```
+
+Config for ceos2(192.168.1.2):
+______________________________
+```
+vlan 667
+  name SO123456
+
+Interface Ethernet1/3
+   switchport trunk allowed vlan add 667
+
+interface Vxlan1
+   vxlan vlan 667 vni 15169667
+
+router bgp 65002
+   vlan-aware-bundle 15169
+      rd 37195:15169
+      route-target both 37195:15169
+      redistribute learned
+      redistribute static
+      vlan 667
+```
+
+### IPInfusion customer (ocnos4 ce14) to local IPInfusion CNI (ocnos4 ce20)
+
+Config for ocnos4(192.168.1.24):
+________________________________
+```
+mac vrf 15169
+ evpn-vlan-service vlan-aware-bundle
+ rd 37195:15169
+ route-target both 37195:15169
+
+nvo vxlan id 15169667 ingress-replication
+ vxlan host-reachability-protocol evpn-bgp 15169
+
+interface po123.667 switchport
+ encapsulation dot1q 667
+ access-if-evpn
+  map vpn-id 15169667
+interface xe14.667 switchport
+  encapsulation dot1q 667
+  access-if-evpn
+    map vpn-id 15169667
 ```
 
