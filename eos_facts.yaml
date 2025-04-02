@@ -5,7 +5,6 @@
     - name: read secrets
       ansible.builtin.include_vars:
         file: secret.yaml
-        name: secret
     - name: send slack notification
       community.general.slack:
         token: "{{ secret.api_token }}"
