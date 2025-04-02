@@ -1,6 +1,6 @@
 - name: get device facts
   hosts: all
-  gather_facts: no
+  gather_facts: false
   tasks:
     - name: send slack notification
       community.general.slack:
