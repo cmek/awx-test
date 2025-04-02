@@ -353,7 +353,7 @@ vlan 42
 interface Ethernet1/1
   switchport trunk allowed vlan add 42
 interface Vxlan1
-   vxlan vlan 42 vni 239667
+   vxlan vlan 42 vni 239042
 router bgp 65001
    vlan-aware-bundle azure-er-2-combined
       vlan add 42
@@ -367,7 +367,7 @@ vlan 42
 interface Ethernet1/1
   switchport trunk allowed vlan add 42
 interface Vxlan1
-   vxlan vlan 42 vni 239667
+   vxlan vlan 42 vni 239042
 router bgp 65004
    vlan-aware-bundle azure-er-2-combined
       vlan add 42
@@ -377,10 +377,10 @@ Config for ocnos3(192.168.1.23):
 ________________________________
 ```
 mac vrf azure-er-2-combined
-  rd 37186:239667
-  route-target both 37186:239667
+  rd 37186:192003
+  route-target both 37186:192003
 
-nvo vxlan id 123456 ingress-replication
+nvo vxlan id 239042 ingress-replication
   vxlan host-reachability-protocol evpn-bgp azure-er-2-combined
 
 interface xe13.667 switchport
@@ -388,7 +388,7 @@ interface xe13.667 switchport
   encapsulation dot1q 667
   rewrite push dot1q 42
   access-if-evpn
-    map vpn-id 123456
+    map vpn-id 239042
 ```
 
 ### CNI on IPI (ocnos1 ce10, ocnos4 ce10) and customer on Arista (ceos2 eth1/3)
@@ -397,47 +397,54 @@ Config for ocnos1(192.168.1.21):
 ________________________________
 ```
 mac vrf SO123456
-  rd 37186:239667
-  route-target both 37186:239667
+  rd 37186:123456
+  route-target both 37186:123456
 
-nvo vxlan id 239667 ingress-replication
+nvo vxlan id 123456 ingress-replication
   vxlan host-reachability-protocol evpn-bgp SO123456
 
 interface ce10.42 switchport
   description SO123456
   encapsulation dot1q 42
+  rewrite pop
   access-if-evpn
-    map vpn-id 239667
+    arp-cache disable
+    nd-cache disable
+    map vpn-id 123456
 ```
 
 Config for ocnos4(192.168.1.24):
 ________________________________
 ```
 mac vrf SO123456
-  rd 37186:239667
-  route-target both 37186:239667
+  rd 37186:123456
+  route-target both 37186:123456
 
-nvo vxlan id 239667 ingress-replication
+nvo vxlan id 123456 ingress-replication
   vxlan host-reachability-protocol evpn-bgp SO123456
 
 interface ce10.42 switchport
   description SO123456
   encapsulation dot1q 42
+  rewrite pop
   access-if-evpn
-    map vpn-id 239667
+    arp-cache disable
+    nd-cache disable
+    map vpn-id 123456
 ```
 
 Config for ceos2(192.168.1.2):
 ______________________________
 ```
-vlan 667
+vlan 42
   name SO123456
 
 Interface Ethernet1/3
-   switchport trunk allowed vlan add 667
+   switchport trunk allowed vlan add 42
+   switchport vlan translation 667 dot1q-tunnel 42
 
 interface Vxlan1
-   vxlan vlan 667 vni 123456
+   vxlan vlan 42 vni 123456
 
 router bgp 65002
    vlan-aware-bundle SO123456
@@ -445,7 +452,7 @@ router bgp 65002
       route-target both 37195:123456
       redistribute learned
       redistribute static
-      vlan 667
+      vlan 42
 ```
 
 # Un-tagged configs - GCP
