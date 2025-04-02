@@ -2,6 +2,9 @@
   hosts: all
   gather_facts: no
   tasks:
+    - name: read secrets
+      ansible.builtin.include_vars:
+        file: secret.yaml
     - name: get version
       ipinfusion.ocnos.ocnos_command:
         commands: "show version"
@@ -11,5 +14,5 @@
         var: version.stdout_lines
     - name: send slack notification
       community.general.slack:
-        token: "TT3PJ353R/B08LENDJM37/vkXFZ2EW3FBu5X3dpkArJFMU"
+        token: "{{ secret.api_token }}"
         msg: "ocnos version: `{{ inventory_hostname }}`: `{{ version.stdout_lines }}`"

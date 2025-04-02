@@ -2,6 +2,9 @@
   hosts: all
   gather_facts: no
   tasks:
+    - name: read secrets
+      ansible.builtin.include_vars:
+        file: secret.yaml
     - name: interface configuration
       ipinfusion.ocnos.ocnos_config:
         src: templates/ocnos/{{ template_name }}.j2
@@ -12,6 +15,6 @@
         var: config_result
     - name: send slack notification
       community.general.slack:
-        token: "TT3PJ353R/B08LENDJM37/vkXFZ2EW3FBu5X3dpkArJFMU"
+        token: "{{ secret.api_token }}"
         msg: "config apply result on device `{{ inventory_hostname }}`: \n```{{ config_result }}```"
 
