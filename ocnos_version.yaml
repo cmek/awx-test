@@ -1,0 +1,15 @@
+- name: get device facts
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: get version
+      ipinfusion.ocnos.ocnos_command:
+        commands: "show version"
+      register: version
+    - name: print facts
+      debug:
+        var: version.stdout_lines
+    - name: send slack notification
+      community.general.slack:
+        token: "TT3PJ353R/B08LENDJM37/vkXFZ2EW3FBu5X3dpkArJFMU"
+        msg: "ocnos version: `{{ inventory_hostname }}`: `{{ version.stdout_lines }}`"

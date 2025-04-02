@@ -6,3 +6,12 @@
       arista.eos.eos_config:
         src: templates/eos/{{ template_name }}.j2
         save_when: modified
+      register: config_result
+    - name: debug
+      debug:
+        var: config_result
+    - name: send slack notification
+      community.general.slack:
+        token: "TT3PJ353R/B08LENDJM37/vkXFZ2EW3FBu5X3dpkArJFMU"
+        msg: "config apply result on device `{{ inventory_hostname }}`: \n```{{ config_result }}```"
+

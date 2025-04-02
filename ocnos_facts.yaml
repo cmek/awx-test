@@ -1,7 +1,11 @@
 - name: get device facts
   hosts: all
-  gather_facts: yes
+  gather_facts: no
   tasks:
+    - name: send slack notification
+      community.general.slack:
+        token: "TT3PJ353R/B08LENDJM37/vkXFZ2EW3FBu5X3dpkArJFMU"
+        msg: "getting facts from: `{{ inventory_hostname }}`"
     - name: get facts
       ipinfusion.ocnos.ocnos_facts:
         gather_subset:
