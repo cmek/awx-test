@@ -1,3 +1,4 @@
 collections:
   - name: arista.eos
   - name: ipinfusion.ocnos
+  - name: community.general
