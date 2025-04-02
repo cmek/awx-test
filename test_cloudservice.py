@@ -215,8 +215,8 @@ nvo vxlan id 239667 ingress-replication
 
 interface xe13.667 switchport
   description SO123456
-  encapsulation dot1q 2003
-  rewrite push dot1q 
+  encapsulation dot1q 667
+  rewrite push dot1q 42
   access-if-evpn
     map vpn-id 239667
 """)
@@ -263,8 +263,8 @@ nvo vxlan id 219667 ingress-replication
 
 interface xe12.667 switchport
   description SO123456
-  encapsulation dot1q 2003
-  rewrite push dot1q 
+  encapsulation dot1q 667
+  rewrite push dot1q 42
   access-if-evpn
     map vpn-id 219667
 Config for ocnos3(192.168.1.23):
@@ -278,8 +278,8 @@ nvo vxlan id 229667 ingress-replication
 
 interface xe13.667 switchport
   description SO123456
-  encapsulation dot1q 2003
-  rewrite push dot1q 
+  encapsulation dot1q 667
+  rewrite push dot1q 42
   access-if-evpn
     map vpn-id 229667
 """)
