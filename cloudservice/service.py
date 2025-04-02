@@ -61,7 +61,7 @@ class AzureService(CloudService):
         """
         path_map = {"primary": 1, "secondary": 2, "combined": 3}
 
-        return f"{express_route_pair}{path_map[path]}9{int(vlan):02d}"
+        return f"{express_route_pair}{path_map[path]}9{int(vlan):03d}"
 
     def get_configs(
         self, s_tag: int, vlan: int, service_key: str, express_route_pair: int
@@ -69,6 +69,26 @@ class AzureService(CloudService):
         """
         this should return a dictionary of configs for each device
         """
+
+        bundle_to_mac_vrf = {"azure-er-1-primary": """mac vrf azure-er-1-primary
+  rd 37186:191001
+  route-target both 37186:191001""",
+                             "azure-er-1-secondary": """mac vrf azure-er-1-secondary
+  rd 37186:191002
+  route-target both 37186:191002""",
+                             "azure-er-2-primary": """mac vrf azure-er-2-primary
+  rd 37186:192001
+  route-target both 37186:192001""",
+                             "azure-er-2-secondary": """mac vrf azure-er-2-secondary
+  rd 37186:192002
+  route-target both 37186:192002""",
+                             "azure-er-1-combined": """mac vrf azure-er-1-combined
+  rd 37186:191003
+  route-target both 37186:191003""",
+                             "azure-er-2-combined": """mac vrf azure-er-2-combined
+  rd 37186:192003
+  route-target both 37186:192003""",
+        }
 
         ret = {}
 
@@ -102,13 +122,27 @@ class AzureService(CloudService):
             variables["interface"] = interface
             variables["template"] = "tagged_cni_interface.j2"
 
+            is_mixed_path = True if device.os != self.customer[0].device.os else False
+
+            if is_mixed_path is True:
+                variables["template"] = "tagged_mixed_cni_interface.j2"
+
             if bundle_name == "combined":
-                variables["vni"] = self._get_vni(express_route_pair, "combined", vlan)
+                if is_mixed_path is True:
+                    variables["vni"] = self._get_vni(express_route_pair, "combined", s_tag)
+                else:
+                    variables["vni"] = self._get_vni(express_route_pair, "combined", vlan)
             else:
                 if endpoint == self.primary_cni_endpoint:
-                    variables["vni"] = self._get_vni(express_route_pair, "primary", vlan)
+                    if is_mixed_path is True:
+                        variables["vni"] = self._get_vni(express_route_pair, "primary", s_tag)
+                    else:
+                        variables["vni"] = self._get_vni(express_route_pair, "primary", vlan)
                 else:
-                    variables["vni"] = self._get_vni(express_route_pair, "secondary", vlan)
+                    if is_mixed_path is True:
+                        variables["vni"] = self._get_vni(express_route_pair, "secondary", s_tag)
+                    else:
+                        variables["vni"] = self._get_vni(express_route_pair, "secondary", vlan)
 
             if bundle_name is None:
                 # if there are multiple customer ports, then the bundle name is the same
@@ -120,12 +154,15 @@ class AzureService(CloudService):
             else:
                 variables["vlan_bundle"] = f"{vlan_bundle_prefix}-{bundle_name}"
 
+            variables["azure_mac_vrf"] = bundle_to_mac_vrf[variables["vlan_bundle"]]
+
             device_name = str(device)
             if device_name in ret:
                 ret[device_name] += "\n" + device.render_config(self.renderer, **variables)
             else:
                 ret[device_name] = device.render_config(self.renderer, **variables)
 
+        # customer end configuration
         for endpoint in self.customer:
             device, interface = endpoint.device, endpoint.interface
             device_name = str(device)
@@ -155,6 +192,16 @@ class AzureService(CloudService):
             else:
                 if device.os != self.cni[0].device.os:
                     variables["template"] = "tagged_customer_mixed_remote_interface.j2"
+
+                    ## for this case we need to swap vlan and s_tag
+                    if bundle_name is None:
+                        if endpoint == self.customer[0]:
+                            variables["vni"] = self._get_vni(express_route_pair, "primary", s_tag)
+                        else:
+                            variables["vni"] = self._get_vni(express_route_pair, "secondary", s_tag)
+                    else:
+                        variables["vni"] = self._get_vni(express_route_pair, "combined", s_tag)
+
                 else:
                     variables["template"] = "tagged_customer_remote_interface.j2"
                 config = device.render_config(self.renderer, **variables)

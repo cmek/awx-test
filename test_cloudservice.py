@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from cloudservice import (CeosDevice,
         OcnosDevice,
         AzureService,
+        GCPService,
         Endpoint,
         JinjaRenderer,
         AWXRenderer)
@@ -282,6 +283,108 @@ interface xe13.667 switchport
   rewrite push dot1q 42
   access-if-evpn
     map vpn-id 229667
+""")
+
+    # Mixed test cases
+
+    def test_cni_on_arista_to_client_on_ocnos(self):
+        configs = AzureService([self.ocnos3_client3], [self.ceos1_azure_pri_1, self.ceos4_azure_sec_1], renderer=self.renderer).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2)
+        configs_str = self.configs_to_str(configs)
+        self.assertEqual(configs_str, """Config for ceos1(192.168.1.1):
+______________________________
+vlan 42
+   name SO123456
+interface Ethernet1/1
+  switchport trunk allowed vlan add 42
+interface Vxlan1
+   vxlan vlan 42 vni 239042
+router bgp 65001
+   vlan-aware-bundle azure-er-2-combined
+      vlan add 42
+Config for ceos4(192.168.1.4):
+______________________________
+vlan 42
+   name SO123456
+interface Ethernet1/1
+  switchport trunk allowed vlan add 42
+interface Vxlan1
+   vxlan vlan 42 vni 239042
+router bgp 65004
+   vlan-aware-bundle azure-er-2-combined
+      vlan add 42
+Config for ocnos3(192.168.1.23):
+________________________________
+mac vrf azure-er-2-combined
+  rd 37186:192003
+  route-target both 37186:192003
+
+nvo vxlan id 239042 ingress-replication
+  vxlan host-reachability-protocol evpn-bgp azure-er-2-combined
+
+interface xe13.667 switchport
+  description SO123456
+  encapsulation dot1q 667
+  rewrite push dot1q 42
+  access-if-evpn
+    map vpn-id 239042
+""")
+
+    def test_cni_on_ocnos_to_client_on_arista(self):
+        configs = AzureService([self.ceos2_client2], [self.ocnos1_azure_pri_2, self.ocnos4_azure_sec_2], renderer=self.renderer).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2)
+        configs_str = self.configs_to_str(configs)
+        self.assertEqual(configs_str, """Config for ocnos1(192.168.1.21):
+________________________________
+mac vrf SO123456
+  rd 37186:123456
+  route-target both 37186:123456
+
+nvo vxlan id 123456 ingress-replication
+  vxlan host-reachability-protocol evpn-bgp SO123456
+
+interface ce10.42 switchport
+  description SO123456
+  encapsulation dot1q 42
+  rewrite pop
+  access-if-evpn
+    arp-cache disable
+    nd-cache disable
+    map vpn-id 123456
+Config for ocnos4(192.168.1.24):
+________________________________
+mac vrf SO123456
+  rd 37186:123456
+  route-target both 37186:123456
+
+nvo vxlan id 123456 ingress-replication
+  vxlan host-reachability-protocol evpn-bgp SO123456
+
+interface ce10.42 switchport
+  description SO123456
+  encapsulation dot1q 42
+  rewrite pop
+  access-if-evpn
+    arp-cache disable
+    nd-cache disable
+    map vpn-id 123456
+Config for ceos2(192.168.1.2):
+______________________________
+vlan 42
+  name SO123456
+
+Interface Ethernet1/3
+   switchport trunk allowed vlan add 42
+   switchport vlan translation 667 dot1q-tunnel 42
+
+interface Vxlan1
+   vxlan vlan 42 vni 123456
+
+router bgp 65002
+   vlan-aware-bundle SO123456
+      rd 37195:123456
+      route-target both 37195:123456
+      redistribute learned
+      redistribute static
+      vlan 42
 """)
 
 

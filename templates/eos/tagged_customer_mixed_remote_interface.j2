@@ -1,11 +1,12 @@
-vlan {{ vlan }}
+vlan {{ s_tag }}
   name {{ service_key }}
 
 Interface {{ interface }}
-   switchport trunk allowed vlan add {{ vlan }}
+   switchport trunk allowed vlan add {{ s_tag }}
+   switchport vlan translation {{ vlan }} dot1q-tunnel {{ s_tag }}
 
 interface Vxlan1
-   vxlan vlan {{ vlan }} vni {{ service_vni }}
+   vxlan vlan {{ s_tag }} vni {{ service_vni }}
 
 router bgp {{ asn }}
    vlan-aware-bundle {{ service_key }}
@@ -13,4 +14,4 @@ router bgp {{ asn }}
       route-target both 37195:{{ service_vni }}
       redistribute learned
       redistribute static
-      vlan {{ vlan }}
+      vlan {{ s_tag }}
