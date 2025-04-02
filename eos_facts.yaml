@@ -4,7 +4,7 @@
   tasks:
     - name: read secrets
       ansible.builtin.include_vars:
-        file: secret.yml
+        file: secret.yaml
         name: secret
     - name: send slack notification
       community.general.slack:
