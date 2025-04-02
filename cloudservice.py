@@ -1,14 +1,18 @@
-from cloudservice import (CeosDevice,
-                          OcnosDevice,
-                          AzureService,
-                          AWSService,
-                          GCPService,
-                          Endpoint,
-                          JinjaRenderer)
+from cloudservice import (
+    CeosDevice,
+    OcnosDevice,
+    AzureService,
+    AWSService,
+    GCPService,
+    Endpoint,
+    JinjaRenderer,
+)
+
 
 def print_configs(configs):
     for device, config in configs.items():
-        print(f"Config for {device}:\n{'_'*(12+len(device))}\n```\n{config}\n```\n")
+        print(f"Config for {device}:\n{'_' * (12 + len(device))}\n```\n{config}\n```\n")
+
 
 if __name__ == "__main__":
     print("""```plaintext
@@ -72,45 +76,138 @@ using the following variables:
     ocnos4_client4 = Endpoint(ocnos4, "xe14")
 
     renderer = JinjaRenderer("templates")
-    
+
     print("""
 # Tagged configs
 ## EOS configs
 """)
-    print("### Service 1 - primary (ceos1 eth1/1) on remote, secondary (ceos4 eth1/1) on local, delivered to single port. Client on ceos4 eth1/5\n")
-    print_configs(AzureService([ceos4_client4], [ceos1_azure_pri_1, ceos4_azure_sec_1], renderer=renderer).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=1))
+    print(
+        "### Service 1 - primary (ceos1 eth1/1) on remote, secondary (ceos4 eth1/1) on local, delivered to single port. Client on ceos4 eth1/5\n"
+    )
+    print_configs(
+        AzureService(
+            [ceos4_client4], [ceos1_azure_pri_1, ceos4_azure_sec_1], renderer=renderer
+        ).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=1)
+    )
 
-    print("### Service 2 - primary (ceos1 eth1/1) and secondary (ceos4 eth1/1) on remote, delivered to single port (ceos3 eth1/4)\n")
-    print_configs(AzureService([ceos3_client3], [ceos1_azure_pri_1, ceos4_azure_sec_1], renderer=renderer).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=1))
+    print(
+        "### Service 2 - primary (ceos1 eth1/1) and secondary (ceos4 eth1/1) on remote, delivered to single port (ceos3 eth1/4)\n"
+    )
+    print_configs(
+        AzureService(
+            [ceos3_client3], [ceos1_azure_pri_1, ceos4_azure_sec_1], renderer=renderer
+        ).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=1)
+    )
 
-    print("### Service 3 - primary (ceos1 eth1/1) and secondary (ceos4 eth1/1) on remote, delivered to different ports - ceos2 eth1/3 and ceos3 eth1/4\n")
-    print_configs(AzureService([ceos2_client2, ceos3_client3], [ceos1_azure_pri_1, ceos4_azure_sec_1], renderer=renderer).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=1))
+    print(
+        "### Service 3 - primary (ceos1 eth1/1) and secondary (ceos4 eth1/1) on remote, delivered to different ports - ceos2 eth1/3 and ceos3 eth1/4\n"
+    )
+    print_configs(
+        AzureService(
+            [ceos2_client2, ceos3_client3],
+            [ceos1_azure_pri_1, ceos4_azure_sec_1],
+            renderer=renderer,
+        ).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=1)
+    )
 
     print("""## OCNOS configs""")
-    print("### Service 1 - primary (ocnos1 ce10) on local, secondary (ocnos4 ce10) on remote, delivered to single port. Client on ocnos1 xe11\n")
-    print_configs(AzureService([ocnos1_client1], [ocnos1_azure_pri_2, ocnos4_azure_sec_2], renderer=renderer).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2))
+    print(
+        "### Service 1 - primary (ocnos1 ce10) on local, secondary (ocnos4 ce10) on remote, delivered to single port. Client on ocnos1 xe11\n"
+    )
+    print_configs(
+        AzureService(
+            [ocnos1_client1],
+            [ocnos1_azure_pri_2, ocnos4_azure_sec_2],
+            renderer=renderer,
+        ).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2)
+    )
 
-    print("### Service 2 - primary (ocnos1 ce10) and secondary (ocnos4 ce10) on remote, delivered to single port (ocnos3 xe13)\n")
-    print_configs(AzureService([ocnos3_client3], [ocnos1_azure_pri_2, ocnos4_azure_sec_2], renderer=renderer).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2))
+    print(
+        "### Service 2 - primary (ocnos1 ce10) and secondary (ocnos4 ce10) on remote, delivered to single port (ocnos3 xe13)\n"
+    )
+    print_configs(
+        AzureService(
+            [ocnos3_client3],
+            [ocnos1_azure_pri_2, ocnos4_azure_sec_2],
+            renderer=renderer,
+        ).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2)
+    )
 
-    print("### Service 3 - primary (ocnos1 ce10) and secondary (ocnos4 ce10) on local, delivered to split ports (ocnos2 ce12) and (ocnos3 ce13)\n")
-    print_configs(AzureService([ocnos2_client2, ocnos3_client3], [ocnos1_azure_pri_2, ocnos4_azure_sec_2], renderer=renderer).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2))
+    print(
+        "### Service 3 - primary (ocnos1 ce10) and secondary (ocnos4 ce10) on local, delivered to split ports (ocnos2 ce12) and (ocnos3 ce13)\n"
+    )
+    print_configs(
+        AzureService(
+            [ocnos2_client2, ocnos3_client3],
+            [ocnos1_azure_pri_2, ocnos4_azure_sec_2],
+            renderer=renderer,
+        ).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2)
+    )
 
     print("## Mixed OCNOS&Arista configs")
 
-    print("### CNI on Arista (ceos1 eth1/1, ceos4 eth1/1) and customer on IPI (ocnos3 ce10)\n")
-    print_configs(AzureService([ocnos3_client3], [ceos1_azure_pri_1, ceos4_azure_sec_1], renderer=renderer).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2))
+    print(
+        "### CNI on Arista (ceos1 eth1/1, ceos4 eth1/1) and customer on IPI (ocnos3 ce10)\n"
+    )
+    print_configs(
+        AzureService(
+            [ocnos3_client3], [ceos1_azure_pri_1, ceos4_azure_sec_1], renderer=renderer
+        ).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2)
+    )
 
-    print("### CNI on IPI (ocnos1 ce10, ocnos4 ce10) and customer on Arista (ceos2 eth1/3)\n")
-    print_configs(AzureService([ceos2_client2], [ocnos1_azure_pri_2, ocnos4_azure_sec_2], renderer=renderer).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2))
+    print(
+        "### CNI on IPI (ocnos1 ce10, ocnos4 ce10) and customer on Arista (ceos2 eth1/3)\n"
+    )
+    print_configs(
+        AzureService(
+            [ceos2_client2], [ocnos1_azure_pri_2, ocnos4_azure_sec_2], renderer=renderer
+        ).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2)
+    )
 
+    print(
+        "### CNI on Arista (ceos1 eth1/1, ceos4 eth1/1) and customer on 2 IPI devices (ocnos2 xe12, ocnos3 xe13)\n"
+    )
+    print_configs(
+        AzureService(
+            [ocnos2_client2, ocnos3_client3],
+            [ceos1_azure_pri_1, ceos4_azure_sec_1],
+            renderer=renderer,
+        ).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2)
+    )
+
+    print(
+        "### CNI on IPI (ocnos1 ce10, ocnos4 ce10) and customer on 2 Arista ports (ceos2 eth1/3, ceos3 eth1/4)\n"
+    )
+    print_configs(
+        AzureService(
+            [ceos2_client2, ceos3_client3],
+            [ocnos1_azure_pri_2, ocnos4_azure_sec_2],
+            renderer=renderer,
+        ).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2)
+    )
 
     print("# Un-tagged configs - GCP")
     print("### Arista customer (ceos2 eth1/3) to OCNOS CNI (ocnos4 ce20)\n")
-    print_configs(GCPService([ceos2_client2], [ocnos4_aws_4], renderer=renderer).get_configs(vlan=667, service_key="SO123456"))
+    print_configs(
+        GCPService([ceos2_client2], [ocnos4_aws_4], renderer=renderer).get_configs(
+            vlan=667, service_key="SO123456"
+        )
+    )
 
-    print("### IPInfusion customer (ocnos4 ce14) to local IPInfusion CNI (ocnos4 po123)\n")
-    print_configs(GCPService([ocnos4_client4], [ocnos4_aws_4], renderer=renderer).get_configs(vlan=667, service_key="SO123456"))
+    print(
+        "### IPInfusion customer (ocnos4 ce14) to local IPInfusion CNI (ocnos4 po123)\n"
+    )
+    print_configs(
+        GCPService([ocnos4_client4], [ocnos4_aws_4], renderer=renderer).get_configs(
+            vlan=667, service_key="SO123456"
+        )
+    )
 
-    print("### IPInfusion customer (ocnos2 xe12) to remote IPInfusion CNI (ocnos4 po123)\n")
-    print_configs(GCPService([ocnos2_client2], [ocnos4_aws_4], renderer=renderer).get_configs(vlan=667, service_key="SO123456"))
+    print(
+        "### IPInfusion customer (ocnos2 xe12) to remote IPInfusion CNI (ocnos4 po123)\n"
+    )
+    print_configs(
+        GCPService([ocnos2_client2], [ocnos4_aws_4], renderer=renderer).get_configs(
+            vlan=667, service_key="SO123456"
+        )
+    )
