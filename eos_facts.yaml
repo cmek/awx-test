@@ -5,7 +5,7 @@
     - name: send slack notification
       community.general.slack:
         token: "TT3PJ353R/B08LENDJM37/vkXFZ2EW3FBu5X3dpkArJFMU"
-        text: "getting facts from: {{ inventory_hostname }}"
+        msg: "getting facts from: {{ inventory_hostname }}"
     - name: get facts
       arista.eos.facts:
         gather_subset:
