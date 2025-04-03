@@ -13,6 +13,7 @@
       debug:
         var: version.stdout_lines
     - name: send slack notification
+      delegate_to: 127.0.0.1
       community.general.slack:
         token: "{{ secret.api_token }}"
         msg: "ocnos version: `{{ inventory_hostname }}`: `{{ version.stdout_lines }}`"
