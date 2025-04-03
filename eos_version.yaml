@@ -13,6 +13,7 @@
       debug:
         var: version.stdout_lines
     - name: send slack notification
+      become: no
       community.general.slack:
         token: "{{ secret.api_token }}"
         msg: "EOS version: `{{ inventory_hostname }}`: `{{ version.stdout_lines }}`"
