@@ -1,0 +1,116 @@
+- name: tower setup
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: read secrets
+      ansible.builtin.include_vars:
+        file: secret.yaml
+# inventory instances
+    - name: ocnos inventory
+      awx.awx.inventory:
+        name: ocnos_inventory
+        description: ocnos inventory
+        state: present
+        organization: Default
+    - name: eos inventory
+      awx.awx.inventory:
+        name: eos_inventory
+        description: eos inventory
+        state: present
+        organization: Default
+# project
+    - name: networking project
+      awx.awx.project:
+        name: networking_templates
+        description: networking templates
+        organization: Default
+        scm_type: git
+        scm_url: "https://github.com/cmek/awx-test.git"
+
+# ansible vault credentials 
+    - name: vault secret
+      awx.awx.credential:
+        name: vault_secret
+        description: vault secret
+        organization: Default
+        credential_type: Vault
+        inputs:
+          vault_password: "{{ secret.password }}"
+
+        
+    - name: eos version template
+      awx.awx.job_template:
+        name: eos_version
+        description: networking templates
+        ask_credential_on_launch: true
+        ask_limit_on_launch: true
+        credentials:
+          - vault_secret
+        project: networking_templates
+        playbook: eos_version.yaml
+        inventory: eos_inventory
+
+
+    - name: ocnos version template
+      awx.awx.job_template:
+        name: ocnos_version
+        description: networking templates
+        ask_credential_on_launch: true
+        ask_limit_on_launch: true
+        credentials:
+          - vault_secret
+        project: networking_templates
+        playbook: ocnos_version.yaml
+        inventory: ocnos_inventory
+
+  # network service templates
+
+    - name: eos network service template
+      awx.awx.job_template:
+        name: eos_network_service
+        description: networking service templates
+        ask_credential_on_launch: true
+        ask_limit_on_launch: true
+        credentials:
+          - vault_secret
+        project: networking_templates
+        playbook: eos_network_service.yaml
+        inventory: eos_inventory
+
+    - name: ocnos network service template
+      awx.awx.job_template:
+        name: ocnos_network_service
+        description: networking service templates
+        ask_credential_on_launch: true
+        ask_limit_on_launch: true
+        credentials:
+          - vault_secret
+        project: networking_templates
+        playbook: ocnos_network_service.yaml
+        inventory: ocnos_inventory
+
+  # facts templates
+    - name: eos facts service template
+      awx.awx.job_template:
+        name: eos_facts
+        description: networking facts templates
+        ask_credential_on_launch: true
+        ask_limit_on_launch: true
+        credentials:
+          - vault_secret
+        project: networking_templates
+        playbook: eos_facts.yaml
+        inventory: eos_inventory
+
+    - name: ocnos facts service template
+      awx.awx.job_template:
+        name: ocnos_facts
+        description: networking facts templates
+        ask_credential_on_launch: true
+        ask_limit_on_launch: true
+        credentials:
+          - vault_secret
+        project: networking_templates
+        playbook: ocnos_facts.yaml
+        inventory: ocnos_inventory
+
