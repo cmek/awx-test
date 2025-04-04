@@ -1,0 +1,11 @@
+interface {{ interface }}
+  switchport trunk allowed vlan remove {{ vlan }}
+
+router bgp {{ asn }}
+  vlan-aware-bundle {{ vni }}
+    no vlan {{ vlan }}
+
+interface Vxlan1
+  no vxlan vlan {{ vlan }} vni {{ vni }}
+
+no vlan {{ vlan }}
