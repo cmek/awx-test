@@ -1,4 +1,4 @@
-from .service import AzureService, AWSService, GCPService
+from .service import AzureService, GCPService
 from .device import CeosDevice, OcnosDevice
 from .endpoint import Endpoint
 from .renderers import JinjaRenderer, AWXRenderer

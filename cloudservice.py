@@ -2,7 +2,6 @@ from cloudservice import (
     CeosDevice,
     OcnosDevice,
     AzureService,
-    AWSService,
     GCPService,
     Endpoint,
     JinjaRenderer,

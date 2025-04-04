@@ -221,62 +221,62 @@ class AzureService(CloudService):
         return ret
 
 
-class AWSService(CloudService):
-    """
-    AWS cloud service
-
-    """
-
-    def __init__(self, customer: Endpoints, cni: Endpoints, renderer) -> None:
-        self.name = "AWS"
-        super().__init__(customer, cni, renderer)
-
-    def get_configs(
-        self, vlan: int, service_key: str
-    ) -> dict:
-        """
-        this should return a dictionary of configs for each device
-        """
-
-        ret = {}
-
-        variables = {
-            "vlan": vlan,
-            "service_key": service_key,
-            "vni": "XXXXXX",
-            "vlan_bundle": "YYYYYYYYY",
-        }
-
-        # is this really hardset?
-        variables["vni"] = "15169"
-
-        # process cloud NNI ports
-        # these use the same template
-        for endpoint in self.cni:
-            device, interface = endpoint.device, endpoint.interface
-            variables["interface"] = interface
-            variables["template"] = "cni_interface.j2"
-
-            device_name = str(device)
-            if device_name in ret:
-                ret[device_name] += "\n" + device.render_config(self.renderer, **variables)
-            else:
-                ret[device_name] = device.render_config(self.renderer, **variables)
-
-        for endpoint in self.customer:
-            device, interface = endpoint.device, endpoint.interface
-            device_name = str(device)
-            variables["interface"] = interface
-            variables["template"] = "customer_remote_interface.j2"
-
-            config = device.render_config(self.renderer, **variables)
-
-            if device_name in ret:
-                ret[device_name] += "\n" + config
-            else:
-                ret[device_name] = config
-
-        return ret
+#class AWSService(CloudService):
+#    """
+#    AWS cloud service
+#
+#    """
+#
+#    def __init__(self, customer: Endpoints, cni: Endpoints, renderer) -> None:
+#        self.name = "AWS"
+#        super().__init__(customer, cni, renderer)
+#
+#    def get_configs(
+#        self, vlan: int, service_key: str
+#    ) -> dict:
+#        """
+#        this should return a dictionary of configs for each device
+#        """
+#
+#        ret = {}
+#
+#        variables = {
+#            "vlan": vlan,
+#            "service_key": service_key,
+#            "vni": "XXXXXX",
+#            "vlan_bundle": "YYYYYYYYY",
+#        }
+#
+#        # is this really hardset?
+#        variables["vni"] = "15169"
+#
+#        # process cloud NNI ports
+#        # these use the same template
+#        for endpoint in self.cni:
+#            device, interface = endpoint.device, endpoint.interface
+#            variables["interface"] = interface
+#            variables["template"] = "cni_interface.j2"
+#
+#            device_name = str(device)
+#            if device_name in ret:
+#                ret[device_name] += "\n" + device.render_config(self.renderer, **variables)
+#            else:
+#                ret[device_name] = device.render_config(self.renderer, **variables)
+#
+#        for endpoint in self.customer:
+#            device, interface = endpoint.device, endpoint.interface
+#            device_name = str(device)
+#            variables["interface"] = interface
+#            variables["template"] = "customer_remote_interface.j2"
+#
+#            config = device.render_config(self.renderer, **variables)
+#
+#            if device_name in ret:
+#                ret[device_name] += "\n" + config
+#            else:
+#                ret[device_name] = config
+#
+#        return ret
 
 class GCPService(CloudService):
     """

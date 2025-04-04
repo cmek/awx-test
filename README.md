@@ -655,7 +655,7 @@ Config for ocnos4(192.168.1.24):
 ________________________________
 ```
 no interface po123.667 switchport
-no nvo vxlan id 15169
+no nvo vxlan id 15169667
 ```
 
 Config for ceos2(192.168.1.2):
@@ -704,9 +704,9 @@ Config for ocnos4(192.168.1.24):
 ________________________________
 ```
 no interface po123.667 switchport
-no nvo vxlan id 15169
+no nvo vxlan id 15169667
 no interface xe14.667 switchport
-no nvo vxlan id 15169
+no nvo vxlan id 15169667
 ```
 
 ### IPInfusion customer (ocnos2 xe12) to remote IPInfusion CNI (ocnos4 po123)
@@ -752,13 +752,13 @@ Config for ocnos4(192.168.1.24):
 ________________________________
 ```
 no interface po123.667 switchport
-no nvo vxlan id 15169
+no nvo vxlan id 15169667
 ```
 
 Config for ocnos2(192.168.1.22):
 ________________________________
 ```
 no interface xe12.667 switchport
-no nvo vxlan id 15169
+no nvo vxlan id 15169667
 ```
 
