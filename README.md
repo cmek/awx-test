@@ -649,6 +649,31 @@ router bgp 65002
       vlan 667
 ```
 
+#### Delete templates
+
+Config for ocnos4(192.168.1.24):
+________________________________
+```
+no interface po123.667 switchport
+no nvo vxlan id 15169
+```
+
+Config for ceos2(192.168.1.2):
+______________________________
+```
+interface Ethernet1/3
+  switchport trunk allowed vlan remove 667
+
+router bgp 65002
+  vlan-aware-bundle 15169
+    no vlan 667
+
+interface Vxlan1
+  no vxlan vlan 667 vni 15169
+
+no vlan 667
+```
+
 ### IPInfusion customer (ocnos4 ce14) to local IPInfusion CNI (ocnos4 po123)
 
 Config for ocnos4(192.168.1.24):
@@ -671,6 +696,17 @@ interface xe14.667 switchport
   encapsulation dot1q 667
   access-if-evpn
     map vpn-id 15169667
+```
+
+#### Delete templates
+
+Config for ocnos4(192.168.1.24):
+________________________________
+```
+no interface po123.667 switchport
+no nvo vxlan id 15169
+no interface xe14.667 switchport
+no nvo vxlan id 15169
 ```
 
 ### IPInfusion customer (ocnos2 xe12) to remote IPInfusion CNI (ocnos4 po123)
@@ -708,5 +744,21 @@ interface xe12.667 switchport
  encapsulation dot1q 667
  access-if-evpn
   map vpn-id 15169667
+```
+
+#### Delete templates
+
+Config for ocnos4(192.168.1.24):
+________________________________
+```
+no interface po123.667 switchport
+no nvo vxlan id 15169
+```
+
+Config for ocnos2(192.168.1.22):
+________________________________
+```
+no interface xe12.667 switchport
+no nvo vxlan id 15169
 ```
 

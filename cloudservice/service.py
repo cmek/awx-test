@@ -29,6 +29,10 @@ class CloudService(abc.ABC):
         """
         return ""
 
+    @abc.abstractmethod
+    def get_delete_configs(self, s_tag: int, vlan: int, service_key: int) -> dict:
+        return ""
+
     def __str__(self):
         return f"{self.customer} -> {self.cni}"
 
@@ -62,6 +66,9 @@ class AzureService(CloudService):
         path_map = {"primary": 1, "secondary": 2, "combined": 3}
 
         return f"{express_route_pair}{path_map[path]}9{int(vlan):03d}"
+
+    def get_delete_configs(self, s_tag: int, vlan: int, service_key: str):
+        raise NotImplementedError("not implemented yet")
 
     def get_configs(
         self, s_tag: int, vlan: int, service_key: str, express_route_pair: int
@@ -279,7 +286,46 @@ class GCPService(CloudService):
 
     def __init__(self, customer: Endpoints, cni: Endpoints, renderer) -> None:
         self.name = "GCP"
+        ## magic number for GCP
+        self.vni_number = 15169
+        for e in cni:
+            assert e.device.os == "ocnos", "GCP CNI must be IPI"
         super().__init__(customer, cni, renderer)
+
+    def get_delete_configs(self, vlan: int, service_key: str):
+        ret = {}
+
+        variables = {
+            "vlan": vlan,
+            "service_key": service_key,
+            "vni": self.vni_number,
+            "template": "delete_interface.j2",
+        }
+
+   
+        for endpoint in self.cni:
+            device, interface = endpoint.device, endpoint.interface
+            variables["interface"] = interface
+
+            device_name = str(device)
+            if device_name in ret:
+                ret[device_name] += "\n" + device.render_config(self.renderer, **variables)
+            else:
+                ret[device_name] = device.render_config(self.renderer, **variables)
+
+        for endpoint in self.customer:
+            device, interface = endpoint.device, endpoint.interface
+            device_name = str(device)
+            variables["interface"] = interface
+
+            device_name = str(device)
+            if device_name in ret:
+                ret[device_name] += "\n" + device.render_config(self.renderer, **variables)
+            else:
+                ret[device_name] = device.render_config(self.renderer, **variables)
+
+        return ret
+
 
     def get_configs(
         self, vlan: int, service_key: str
@@ -293,12 +339,9 @@ class GCPService(CloudService):
         variables = {
             "vlan": vlan,
             "service_key": service_key,
-            "vni": "XXXXXX",
+            "vni": self.vni_number,
             "vlan_bundle": "YYYYYYYYY",
         }
-
-        # is this really hardset?
-        variables["vni"] = "15169"
 
         # process cloud NNI ports
         # these use the same template

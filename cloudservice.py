@@ -188,8 +188,15 @@ using the following variables:
 
     print("# Un-tagged configs - GCP")
     print("### Arista customer (ceos2 eth1/3) to OCNOS CNI (ocnos4 ce20)\n")
+    service = GCPService([ceos2_client2], [ocnos4_aws_4], renderer=renderer)
     print_configs(
-        GCPService([ceos2_client2], [ocnos4_aws_4], renderer=renderer).get_configs(
+        service.get_configs(
+            vlan=667, service_key="SO123456"
+        )
+    )
+    print("#### Delete templates\n")
+    print_configs(
+        service.get_delete_configs(
             vlan=667, service_key="SO123456"
         )
     )
@@ -197,8 +204,15 @@ using the following variables:
     print(
         "### IPInfusion customer (ocnos4 ce14) to local IPInfusion CNI (ocnos4 po123)\n"
     )
+    service = GCPService([ocnos4_client4], [ocnos4_aws_4], renderer=renderer)
     print_configs(
-        GCPService([ocnos4_client4], [ocnos4_aws_4], renderer=renderer).get_configs(
+        service.get_configs(
+            vlan=667, service_key="SO123456"
+        )
+    )
+    print("#### Delete templates\n")
+    print_configs(
+        service.get_delete_configs(
             vlan=667, service_key="SO123456"
         )
     )
@@ -206,8 +220,15 @@ using the following variables:
     print(
         "### IPInfusion customer (ocnos2 xe12) to remote IPInfusion CNI (ocnos4 po123)\n"
     )
+    service = GCPService([ocnos2_client2], [ocnos4_aws_4], renderer=renderer)
     print_configs(
-        GCPService([ocnos2_client2], [ocnos4_aws_4], renderer=renderer).get_configs(
+        service.get_configs(
+            vlan=667, service_key="SO123456"
+        )
+    )
+    print("#### Delete templates\n")
+    print_configs(
+        service.get_delete_configs(
             vlan=667, service_key="SO123456"
         )
     )
