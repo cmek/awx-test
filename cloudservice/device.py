@@ -5,7 +5,8 @@ class BaseDevice(abc.ABC):
     _os = None
 
     def __init__(
-        self, name: str, ip_address: str, interface: str | None = None
+        self, name: str, ip_address: str, interface=None
+        #self, name: str, ip_address: str, interface: str | None = None
     ) -> None:
         self.name = name
         self.ip_address = ip_address

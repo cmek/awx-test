@@ -2,8 +2,8 @@ import abc
 from .device import BaseDevice
 from .endpoint import Endpoint
 
-type Devices = list[BaseDevice]
-type Endpoints = list[Endpoint]
+#type Devices = list[BaseDevice]
+#type Endpoints = list[Endpoint]
 
 
 class CloudService(abc.ABC):
@@ -17,7 +17,7 @@ class CloudService(abc.ABC):
          with Azure it is always 2 ports
     """
 
-    def __init__(self, customer: Endpoints, cni: Endpoints, renderer) -> None:
+    def __init__(self, customer, cni, renderer) -> None:
         self.customer = customer
         self.renderer = renderer
         self.cni = cni
@@ -47,7 +47,7 @@ class AzureService(CloudService):
     Azure will always have 2 endpoints - primary and secondary.
     """
 
-    def __init__(self, customer: Endpoints, cni: Endpoints, renderer) -> None:
+    def __init__(self, customer, cni, renderer) -> None:
         self.name = "Azure"
         # assume we always have 2 Azure endpoints
         assert len(cni) == 2
@@ -284,7 +284,7 @@ class GCPService(CloudService):
 
     """
 
-    def __init__(self, customer: Endpoints, cni: Endpoints, renderer) -> None:
+    def __init__(self, customer, cni, renderer) -> None:
         self.name = "GCP"
         ## magic number for GCP
         self.vni_number = 15169
