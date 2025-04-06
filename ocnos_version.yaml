@@ -3,6 +3,7 @@
   gather_facts: no
   tasks:
     - name: read secrets
+      delegate_to: 127.0.0.1
       ansible.builtin.include_vars:
         file: secret.yaml
     - name: get version
