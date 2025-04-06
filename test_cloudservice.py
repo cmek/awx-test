@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import patch
 from dotenv import load_dotenv
 from cloudservice import (
-    CeosDevice,
+    EosDevice,
     OcnosDevice,
     AzureService,
     GCPService,
@@ -27,10 +27,10 @@ class TestCloudService(unittest.TestCase):
 
     def setUp(self):
         self.maxDiff = None
-        ceos1 = CeosDevice("ceos1", "192.168.1.1")
-        ceos2 = CeosDevice("ceos2", "192.168.1.2")
-        ceos3 = CeosDevice("ceos3", "192.168.1.3")
-        ceos4 = CeosDevice("ceos4", "192.168.1.4")
+        ceos1 = EosDevice("ceos1", "192.168.1.1")
+        ceos2 = EosDevice("ceos2", "192.168.1.2")
+        ceos3 = EosDevice("ceos3", "192.168.1.3")
+        ceos4 = EosDevice("ceos4", "192.168.1.4")
 
         ocnos1 = OcnosDevice("ocnos1", "192.168.1.21")
         ocnos2 = OcnosDevice("ocnos2", "192.168.1.22")
@@ -591,7 +591,7 @@ router bgp 65003
 class TestAWXRenderer(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.ceos1 = CeosDevice("ceos1", "192.168.1.1")
+        self.ceos1 = EosDevice("ceos1", "192.168.1.1")
         self.ocnos1 = OcnosDevice("ocnos1", "192.168.1.21")
         self.renderer = AWXRenderer(
             os.getenv("AWX_URL", ""),

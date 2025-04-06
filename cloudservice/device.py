@@ -71,7 +71,7 @@ class BaseDevice(abc.ABC):
 #        return template.render(**kwargs)
 
 
-class CeosDevice(BaseDevice):
+class EosDevice(BaseDevice):
     """ """
 
     _os = "eos"

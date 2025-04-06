@@ -1,5 +1,5 @@
 from cloudservice import (
-    CeosDevice,
+    EosDevice,
     OcnosDevice,
     AzureService,
     GCPService,
@@ -44,10 +44,10 @@ using the following variables:
 ```
     """)
 
-    ceos1 = CeosDevice("ceos1", "192.168.1.1")
-    ceos2 = CeosDevice("ceos2", "192.168.1.2")
-    ceos3 = CeosDevice("ceos3", "192.168.1.3")
-    ceos4 = CeosDevice("ceos4", "192.168.1.4")
+    ceos1 = EosDevice("ceos1", "192.168.1.1")
+    ceos2 = EosDevice("ceos2", "192.168.1.2")
+    ceos3 = EosDevice("ceos3", "192.168.1.3")
+    ceos4 = EosDevice("ceos4", "192.168.1.4")
 
     ocnos1 = OcnosDevice("ocnos1", "192.168.1.21")
     ocnos2 = OcnosDevice("ocnos2", "192.168.1.22")
