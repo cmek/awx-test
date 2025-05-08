@@ -1,6 +1,6 @@
 interface {{ interface }}.{{ vlan }}
   description {{ service_key }}
   encapsulation dot1q {{ vlan }}
-  rewrite push {{ s_tag }}
+  rewrite push dot1q {{ s_tag }}
   access-if-evpn
     map vpn-id {{ vni }}
