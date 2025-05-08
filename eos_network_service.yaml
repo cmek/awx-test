@@ -8,7 +8,7 @@
         file: secret.yaml
     - name: interface configuration
       arista.eos.eos_config:
-        src: templates/eos/{{ template_name }}.j2
+        src: templates/eos/{{ template_name }}
         save_when: modified
       register: config_result
     - name: debug
