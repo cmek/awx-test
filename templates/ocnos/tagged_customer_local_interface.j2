@@ -1,4 +1,4 @@
-interface {{ interface }}.{{ vlan }}
+interface {{ interface }}.{{ vlan }} switchport
   description {{ service_key }}
   encapsulation dot1q {{ vlan }}
   rewrite push dot1q {{ s_tag }}
