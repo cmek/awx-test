@@ -174,10 +174,10 @@ interface ce10.42 switchport
   encapsulation dot1q 42
   access-if-evpn
     map vpn-id 239667
-interface xe11.667
-  description 
+interface xe11.667 switchport
+  description SO123456
   encapsulation dot1q 667
-  rewrite push 42
+  rewrite push dot1q 42
   access-if-evpn
     map vpn-id 239667
 Config for ocnos4(192.168.1.24):
