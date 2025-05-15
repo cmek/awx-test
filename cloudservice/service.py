@@ -121,6 +121,11 @@ class AzureService(CloudService):
         ## if there's only one customer port then it's 'combined'
         if len(self.customer) == 1:
             bundle_name = "combined"
+        else:
+            if self.customer[0].interface.startswith("po") or self.customer[0].interface.startswith("Port-Channel"):
+                # if either of the customer ports is a bundle then it's combined
+                bundle_name = "combined"
+
 
         # process cloud NNI ports (Azure)
         # these use the same template

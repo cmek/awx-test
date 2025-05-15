@@ -53,6 +53,73 @@ class TestCloudService(unittest.TestCase):
         self.ocnos3_client3 = Endpoint(ocnos3, "xe13")
         self.ocnos4_client4 = Endpoint(ocnos4, "xe14")
 
+        self.ocnos_client_mlag1 = Endpoint(ocnos1, "po20")
+        self.ocnos_client_mlag2 = Endpoint(ocnos2, "po20")
+
+
+    def test_arista_primary_and_secondary_client_on_ipi_mlag(self):
+        configs = AzureService(
+            [self.ocnos_client_mlag1, self.ocnos_client_mlag2],
+            [self.ceos1_azure_pri_1, self.ceos4_azure_sec_1],
+            self.renderer,
+        ).get_configs(s_tag=42, vlan=667, service_key="SO123456", express_route_pair=2)
+        configs_str = self.configs_to_str(configs)
+        self.assertEqual(
+            configs_str,
+                """Config for ceos1(192.168.1.1):
+______________________________
+vlan 42
+   name SO123456
+interface Ethernet1/1
+  switchport trunk allowed vlan add 42
+interface Vxlan1
+   vxlan vlan 42 vni 239042
+router bgp 65001
+   vlan-aware-bundle azure-er-2-combined
+      vlan add 42
+Config for ceos4(192.168.1.4):
+______________________________
+vlan 42
+   name SO123456
+interface Ethernet1/1
+  switchport trunk allowed vlan add 42
+interface Vxlan1
+   vxlan vlan 42 vni 239042
+router bgp 65004
+   vlan-aware-bundle azure-er-2-combined
+      vlan add 42
+Config for ocnos1(192.168.1.21):
+________________________________
+mac vrf azure-er-2-combined
+  rd 37186:192003
+  route-target both 37186:192003
+
+nvo vxlan id 239042 ingress-replication
+  vxlan host-reachability-protocol evpn-bgp azure-er-2-combined
+
+interface po20.667 switchport
+  description SO123456
+  encapsulation dot1q 667
+  rewrite push dot1q 42
+  access-if-evpn
+    map vpn-id 239042
+Config for ocnos2(192.168.1.22):
+________________________________
+mac vrf azure-er-2-combined
+  rd 37186:192003
+  route-target both 37186:192003
+
+nvo vxlan id 239042 ingress-replication
+  vxlan host-reachability-protocol evpn-bgp azure-er-2-combined
+
+interface po20.667 switchport
+  description SO123456
+  encapsulation dot1q 667
+  rewrite push dot1q 42
+  access-if-evpn
+    map vpn-id 239042
+""")
+
     def test_arista_primary_on_remote_secondary_on_local_single_port(self):
         configs = AzureService(
             [self.ceos4_client4],
